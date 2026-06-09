@@ -1,0 +1,6 @@
+{
+  "name": "Contrat de Prêt Notarié",
+  "description": "Générateur de contrat de prêt officiel et éditable avec signatures stylisées, sceau notarié, filigrane et en-tête personnalisable.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
