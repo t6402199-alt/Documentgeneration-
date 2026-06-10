@@ -6,3 +6,22 @@
   border-radius: 4px;
 }
 
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+.background-watermark {
+  background-image: url('...');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+

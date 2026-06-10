@@ -30,12 +30,131 @@ import {
   PenTool,
   RotateCcw,
   Sparkles,
+  RefreshCw,
   Award,
   BookOpen,
   ShieldCheck,
   Lock,
   Edit
 } from 'lucide-react';
+
+const baseTemplateForTranslation = {
+  headerUnion: "UNION EUROPÉENNE",
+  headerBanking: "AUTORITÉ BANCAIRE EUROPÉENNE",
+  headerBar: "ORDRES DES AVOCATS ET GREFFE CIVIL",
+  headerCabinet: "OFFICE NOTARIAL ET CONTROLE DES FONDS",
+  contractTitle: "CONTRAT DE PRÊT",
+  introText: "Le présent contrat de prêt prend effet à compter du [DATE_SIGNED], après signatures de :",
+  lenderRole: "M. / Mme [NAME] (PRÊTEUR), coordinateur principal de SMART PRESTITO SERVICES S.A. pour la division CREDIVITE S.A., résident à [ADDRESS].",
+  borrowerRole: "Et M. / Mme [NAME] (EMPRUNTEUR), résident à [ADDRESS].",
+  preambleTitle: "PREAMBULE",
+  preambleClause1: "Considérant que l'emprunteur a sollicité auprès du prêteur un prêt de [AMOUNT] sur une durée de remboursement de [DURATION] mois et avec un taux d'intérêt fixe de [RATE]%.",
+  preambleClause2: "Considérant que le prêteur accepte de lui octroyer ce prêt pour la réalisation de son projet socio-humanitaire ou d'investissement personnel confidentiel.",
+  preambleClause3: "Considérant que l'emprunteur s'engage solennellement devant la justice civile à rembourser ce prêt conformément aux conditions stipulées et de bonne foi,",
+  partiesAgree: "LES PARTIES CONVIENNENT DE CE QUI SUIT :",
+  art1Title: "1. OBLIGATION DE REMBOURSEMENT UNIQUE",
+  art1Content: "L'emprunteur s'engage à rembourser, sans préjudice, un montant total de [TOTAL] sur l'échéance contractuelle de [DURATION] mois. Les opérations de versement démarreront sous un délai de carence maximum de 90 jours (3 mois) après réception des fonds sur son compte bancaire.",
+  paramTitle: "CALCUL CONSOLIDE DU DISPOSITIF DE PRÊT",
+  paramLoan: "Montant principal du prêt :",
+  paramTotal: "Montant total de remboursement :",
+  paramRate: "Taux d'intérêt annuel fixe :",
+  paramInstallment: "Mensualité de remboursement :",
+  paramInterest: "Cumul total des intérêts civils :",
+  paramDuration: "Durée globale d'amortissement :",
+  art2Title: "2. ÉCHÉANCIER DE VERSEMENT",
+  art2Content: "L'emprunteur procédera au paiement régulier comme suit : règlement fractionné de [DURATION] mensualités d'égales valeurs s'élevant chacune à [INSTALLMENT], fixées au [DAY] de chaque mois consécutif.",
+  art3Title: "3. REMBOURSEMENT ANTICIPÉ",
+  art3Content: "L'emprunteur dispose de la faculté d'éteindre sa dette à tout moment sans frais supplémentaires par un remboursement anticipé de l'intégralité du solde résiduel dû.",
+  art4Title: "4. RESPONSABILITÉ JURIDIQUE CIVILE",
+  art4Content: "Bien que le présent acte implique d'autres intervenants de contrôle, l'Emprunteur demeure seul et unique responsable légal de la bonne réalisation des obligations financières souscrites d'office.",
+  art5Title: "5. ASSURANCE ET FRAIS DE GARANTIE ACTE",
+  art5Content: "Le bénéficiaire doit certifier sa demande par le versement obligatoire de l'assurance crédit. Suite à la signature, l'emprunteur devra s'acquitter de la somme de [FEE] pour la garantie obligatoire de son dossier auprès de l'assureur agréé, préalablement au virement des fonds de [AMOUNT].",
+  art6Title: "6. DÉFAUT DE REMBOURSEMENT ET SANCTIONS",
+  art6Content: "Tout manquement répété ou non-respect de l'acte sans justification légale validée par l'autorité compétente entraînera des poursuites directes ainsi que la révocation immédiate des délais de paiement consentis d'office.",
+  art7Title: "7. JURIDICTION ET DROIT DE COMPENSAZIONE",
+  art7Content: "Après trois échéances impayées et sans justification appropriée validée, l'acte devient dument exécutoire et le prêteur obtiendra la compensation totale ou partielle par l'assureur crédit agréé à la hauteur des montants en souffrance.",
+  closingRemarks: "Dans le cas où les retards seraient dument justifiés par l'emprunteur, l'autorité financière compétente ou le tribunal civil décidera d'un commun accord.",
+  labelBorrower: "L'EMPRUNTEUR (DÉBITEUR)",
+  labelLender: "LE PRÊTEUR (CRÉANCIER)",
+  labelNotary: "LE NOTAIRE (OFFICIER CIVIL)",
+  handwriteLabel: "Écrire obligatoirement de sa main :",
+  handwriteTextBorrower: '"Lu et approuvé d\'office, bon pour accord"',
+  handwriteTextLender: '"Bon pour accord, crédit débloqué d\'office"',
+  handwriteTextNotary: '"Homologué et enregistré sous sceau de l\'État"',
+  manualSignature: "SIGNATURE MANUELLE OBLIGATOIRE",
+  afterPrint: "(À signer après impression physique)",
+  stampDefaultText: "Sceau d'homologation administrative",
+  controlLabel: "CONTRÔLE ADMINISTRATIF",
+  officerApproved: "OFFICIEL",
+  approvedLabel: "AGRÉÉ",
+  homologatedLabel: "HOMOLOGUÉ",
+  civilSealLabel: "SCEAU CIVIL",
+  proxyLenderLabel: "Proxy Prêteur",
+  officerLabel: "Officier",
+  debtorLabel: "Débiteur",
+  freeEditionMode: "✍️ Mode Édition Libre (Touchez un texte pour le modifier en direct)",
+  officialCertified: "🔒 Acte Officiel Certifié Figé (Non Modifiable)",
+  stateSeal: "Sceau d'État",
+  notaryOfficePrefix: "ÉTUDE NOTARIALE DE ME",
+  servicesNotarial: "SERVICES NOTARIAUX"
+};
+
+const baseWordTemplate = {
+  docTitle: "Acte Authentique de Prêt Notarié",
+  refLine: "ACTE NOTARIÉ CIVIL D'ENREGISTREMENT SYSTÉMIQUE :",
+  titleBox: "CONTRAT DE PRÊT",
+  procedureTitle: "PROCÉDURE D'ADMINISTRATION JURIDIQUE ET ADMINISTRATIVE :",
+  procedureBody: "Devant Maître [NOTARY_NAME], notaire assermenté inscrit à la chancellerie près l'adresse professionnelle [NOTARY_ADDRESS], titulaire du brevet de licence notariale de l'État N° [NOTARY_LICENSE]. Comparissent d'une part le Prêteur et d'autre part l'Emprunteur dument identifiés ci-après sous foi de serment.",
+  section1Title: "Article 1 : Désignation des Parties et Pouvoirs",
+  cardA: "A. LE PRÊTEUR (CRÉANCIER)",
+  cardB: "B. L'EMPRUNTEUR (DÉBITEUR)",
+  fullName: "Nom complet :",
+  birthInfo: "Date & Lieu de naissance :",
+  profession: "Profession déclarée :",
+  addressLabel: "Adresse légale :",
+  identityLabel: "Identité légale :",
+  contactLabel: "Coordonnées :",
+  employerLabel: "Profession & Employeur :",
+  incomeLabel: "Ressources financières :",
+  incomeValue: "Revenu mensuel déclaré récurrent de ~[MONTHLY_INCOME] [CURRENCY]",
+  section2Title: "Article 2 : Clauses de Financement et d'Amortissement",
+  sec21Title: "Section 2.1 : Mise à disposition des fonds et motif contractuel",
+  sec21Body: "Le prêteur s'engage à mettre à la disposition de l'emprunteur, qui accepte, la somme en principal de [PRINCIPAL]. L'emprunteur atteste et certifie sous peine de nullité absolue de l'acte que cette somme est exclusivement destinée à la réalisation du projet suivant : « [FUND_PURPOSE] ».",
+  sec22Title: "Section 2.2 : Taux d'intérêt conventionnel et coût du crédit",
+  sec22Body: "Ce crédit est consenti au taux d'intérêt nominal annuel et conventionnel fixe de [RATE]%. Sur toute la durée convenue de [DURATION] mois, l'importo total des intérêts s'élève à [TOTAL_INTEREST].",
+  sec23Title: "Section 2.3 : Tableau d'échéance et amortissement",
+  sec23Body_start: "L'amortissement du principal et des intérêts cumulés représentant une somme totale de [TOTAL_REPAYABLE] s'effectuera selon une périodicité de remboursement [REPAYMENT_FREQUENCY].",
+  sec23Body_mensuel: "Le remboursement s'effectuera mensuellement pour un montant récurrent réglé par fraction de [INSTALLMENT_PAYMENT] chacune.",
+  sec23Body_trimestriel: "Le remboursement s'effectuera trimestriellement pour un montant récurrent réglé par fraction de [INSTALLMENT_PAYMENT] chacune.",
+  sec23Body_unique: "Le remboursement s'effectuera en une seule échéance finale à terme échu représentant la totalité de l'obligation financière.",
+  sec23Body_dates: "La première échéance obligatoire est fixée au [FIRST_REPAYMENT_DATE], et la date de libération totale de la dette est fixée au [FINAL_REPAYMENT_DATE].",
+  section3Title: "Article 3 : Pénalités de Retard et Intérêts Moratoires",
+  section3Body: "En cas d'impayé persistant au-delà d'un délai de tolérance de cinq (5) jours consécutifs, l'Emprunteur s'expose de plein droit à l'application de pénalités moratoires cumulatives :",
+  penaltyBoxHeader: "DISPOSITIFS DE SANCTION DE RETARD CONVENTIONNELS :",
+  penaltyFixed: "- Indemnité forfaitaire de retard fixe de : [PENALTY_FIXED_AMOUNT] par échéance en défaut.",
+  penaltyRate: "- Taux de majoration pénal moratoire d'intérêt de retard cumulatif de : [PENALTY_RATE]% par mois applicable sur l'échéance non payée.",
+  penaltyWarning: "En l'absence de régularisation totale sous quinzaine après mise en demeure officielle, le présent acte devient de plein droit dument exécutoire par l'Officier Civil compétent.",
+  section4Title: "Article 4 : Frais d'Acte, Fiscalité & Taxes nationales assorties",
+  section4Body: "Conformément à la législation civile en vigueur sur l'enregistrement des actes de financement, les frais d'évaluation notariale et d'homologation s'élevant à [FEE_AMOUNT] sont soumis à la taxe sur la valeur ajoutée au taux de [TVA_RATE]%. Le montant de la taxe due s'élève à [TVA_AMOUNT], pour un montant total exigible de [TOTAL_WITH_TAXES].",
+  labelDone: "Fait et homologué sous signature officielle de Maître d'étude à [CITY] ([COUNTRY]), le [SIGNATURE_DATE]",
+  labelLender: "LE PRÊTEUR (CRÉANCIER)",
+  labelBorrower: "L'EMPRUNTEUR (DÉBITEUR)",
+  labelNotary: "LE NOTAIRE DE L'ÉTUDE",
+  stampLenderTitle: "★★ CREDIVITE S.A. ★★",
+  stampLenderDept: "DIVISION CRÉDITS D'INVESTISSEMENTS",
+  stampLenderCert: "ACTO DE PRÂT CERTIFIÉ VALIDÉ",
+  stampLenderSig: "Signature du Représentant CREDIVITE S.A.",
+  docLenderMention: "Bon pour accord, crédit débloqué d'office",
+  stampNotaryTitle: "SCEAU DE L'OFFICE CIVIL D'ENREGISTREMENT D'ÉTAT",
+  stampNotarySig: "Sceau de Me [NOTARY_NAME]",
+  stampNotaryTax: "TAXE DE TIMBRE DE SÉCURITÉ ENREGISTRÉE COMPENSÉE",
+  docNotaryMention: "Homologué et enregistré sous sceau de l'État",
+  stampBorrowerTitle: "SIGNATURE MANUELLE OBLIGATOIRE EMPRUNTEUR",
+  stampBorrowerSub: "(Parapher chaque page, signer d'encre noire)",
+  docBorrowerMention: "Doit écrire de sa main: \"Lu et approuvé d'office, bon pour accord\"",
+  section5Title: "Article 5 : Assurance Crédit Optionnelle & Déblocage des fonds",
+  section5Body: "Le bénéficiaire certifie sa solvabilité et active la mise à disposition des fonds en s'acquittant des droits de l'assurance crédit obligatoire d'un montant de [FEE_AMOUNT]. Suite à la signature des présentes, l'emprunteur s'engage à régulariser cette somme auprès de l'assureur agréé pour finaliser formellement l'envoi effectif du capital de [PRINCIPAL]."
+};
 
 export default function App() {
   // 1. STATE INITIALIZATION WITH LEGAL ADMINISTRATION PRESETS
@@ -53,6 +172,7 @@ export default function App() {
     signatureType: 'text',
     signatureDrawData: '',
     fontStyle: 'font-signature1',
+    hasSigned: true,
   });
 
   const [borrower, setBorrower] = useState<PartyDetails>({
@@ -71,6 +191,7 @@ export default function App() {
     signatureType: 'text',
     signatureDrawData: '',
     fontStyle: 'font-signature2',
+    hasSigned: true,
   });
 
   const [notary, setNotary] = useState<PartyDetails>({
@@ -87,6 +208,7 @@ export default function App() {
     signatureType: 'text',
     signatureDrawData: '',
     fontStyle: 'font-signature3',
+    hasSigned: true,
   });
 
   const [loan, setLoan] = useState<LoanDetails>({
@@ -131,6 +253,14 @@ export default function App() {
   const [bannerAlert, setBannerAlert] = useState<string | null>(
     "Remplissez les informations administratives ci-dessous puis appuyez sur 'Générer le contrat' pour concevoir l'acte juridique officiel signé."
   );
+
+  // States for custom translation and Gemini dynamic mapping
+  const [customTranslations, setCustomTranslations] = useState<any | null>(null);
+  const [customTranslationsWord, setCustomTranslationsWord] = useState<any | null>(null);
+  const [isTranslating, setIsTranslating] = useState<boolean>(false);
+  const [translationError, setTranslationError] = useState<string | null>(null);
+  const [localCustomLangInput, setLocalCustomLangInput] = useState<string>('');
+  const [translatedLangCode, setTranslatedLangCode] = useState<string>('');
   
   // Signature Modals
   const [sigTarget, setSigTarget] = useState<'lender' | 'borrower' | 'notary' | null>(null);
@@ -173,24 +303,107 @@ export default function App() {
     setStyling(prev => ({ ...prev, [key]: value }));
   };
 
+  const triggerAITranslation = async (targetLang: string) => {
+    setIsTranslating(true);
+    setTranslationError(null);
+    setBannerAlert(`Traduction en cours du contrat en ${targetLang} avec l'IA Gemini...`);
+    try {
+      const response = await fetch("/api/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          targetLanguage: targetLang,
+          texts: {
+            preview: baseTemplateForTranslation,
+            word: baseWordTemplate
+          }
+        })
+      });
+      const data = await response.json();
+      if (data.success && data.translation) {
+        setCustomTranslations(data.translation.preview);
+        setCustomTranslationsWord(data.translation.word);
+        setTranslatedLangCode(targetLang);
+        
+        // Update styling state with custom values
+        setStyling(prev => ({
+          ...prev,
+          language: 'CUSTOM',
+          customLanguageLabel: targetLang,
+          customTranslations: data.translation.preview,
+          customTranslationsWord: data.translation.word
+        }));
+        
+        setBannerAlert(`Succès ! Votre contrat est maintenant traduit en "${targetLang}" par l'IA.`);
+      } else {
+        throw new Error(data.error || "La traduction a échoué.");
+      }
+    } catch (error: any) {
+      console.error(error);
+      setTranslationError(error.message || String(error));
+      setBannerAlert(`Erreur de traduction IA : ${error.message || String(error)}`);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const handleLanguageChange = (lang: StylingDetails['language']) => {
+    if (lang === 'CUSTOM') {
+      setStyling(prev => ({ ...prev, language: 'CUSTOM' }));
+      return;
+    }
+    
+    // Check if it's one of the standard translation catalogs of ContractPreview (FR, EN, IT)
+    if (['FR', 'EN', 'IT', 'BOTH'].includes(lang)) {
+      setStyling(prev => ({ ...prev, language: lang }));
+      setCustomTranslations(null);
+      setCustomTranslationsWord(null);
+      setTranslatedLangCode('');
+      setBannerAlert(`Langue sélectionnée : ${lang === 'FR' ? "Français" : lang === 'IT' ? "Italien" : "Anglais"}.`);
+    } else {
+      // It's a standard language but only supported in Preview, not Word. (ES, DE, PT, NL, PL, RO)
+      // Let's automatically translate the Word catalog using Gemini so the export is perfectly in the selected language!
+      const langMapping: { [key: string]: string } = {
+        'ES': 'Espagnol',
+        'DE': 'Allemand',
+        'PT': 'Portugais',
+        'NL': 'Néerlandais',
+        'PL': 'Polonais',
+        'RO': 'Roumain'
+      };
+      const label = langMapping[lang] || 'Espagne';
+      setStyling(prev => ({ ...prev, language: lang }));
+      triggerAITranslation(label);
+    }
+  };
+
+  const handleLangToggleAndTranslate = (langText: string) => {
+    setStyling(prev => ({
+      ...prev,
+      language: 'CUSTOM',
+      customLanguageLabel: langText
+    }));
+    triggerAITranslation(langText);
+  };
+
   const saveSignature = (dataUrl: string) => {
     if (sigTarget === 'lender') {
-      setLender(prev => ({ ...prev, signatureType: 'draw', signatureDrawData: dataUrl }));
+      setLender(prev => ({ ...prev, signatureType: 'draw', signatureDrawData: dataUrl, hasSigned: true }));
     } else if (sigTarget === 'borrower') {
-      setBorrower(prev => ({ ...prev, signatureType: 'draw', signatureDrawData: dataUrl }));
+      setBorrower(prev => ({ ...prev, signatureType: 'draw', signatureDrawData: dataUrl, hasSigned: true }));
     } else if (sigTarget === 'notary') {
-      setNotary(prev => ({ ...prev, signatureType: 'draw', signatureDrawData: dataUrl }));
+      setNotary(prev => ({ ...prev, signatureType: 'draw', signatureDrawData: dataUrl, hasSigned: true }));
     }
     setBannerAlert(`Signature dessinée enregistrée pour : ${sigTarget === 'lender' ? "Le Prêteur" : sigTarget === 'borrower' ? "L'Emprunteur" : "Le Notaire"}.`);
   };
 
   const clearSignatureData = (party: 'lender' | 'borrower' | 'notary') => {
     if (party === 'lender') {
-      setLender(prev => ({ ...prev, signatureType: 'text', signatureDrawData: '' }));
+      setLender(prev => ({ ...prev, signatureType: 'text', signatureDrawData: '', hasSigned: true }));
     } else if (party === 'borrower') {
-      setBorrower(prev => ({ ...prev, signatureType: 'text', signatureDrawData: '' }));
+      setBorrower(prev => ({ ...prev, signatureType: 'text', signatureDrawData: '', hasSigned: true }));
     } else if (party === 'notary') {
-      setNotary(prev => ({ ...prev, signatureType: 'text', signatureDrawData: '' }));
+      setNotary(prev => ({ ...prev, signatureType: 'text', signatureDrawData: '', hasSigned: true }));
     }
     setBannerAlert("La signature a été réinitialisée au format textuel par défaut.");
   };
@@ -211,6 +424,7 @@ export default function App() {
         signatureType: 'text',
         signatureDrawData: '',
         fontStyle: 'font-signature1',
+        hasSigned: true,
       });
       setBorrower({
         name: 'Annesse Dubois',
@@ -228,6 +442,7 @@ export default function App() {
         signatureType: 'text',
         signatureDrawData: '',
         fontStyle: 'font-signature2',
+        hasSigned: true,
       });
       setNotary({
         name: 'Ericam Dupont',
@@ -243,6 +458,7 @@ export default function App() {
         signatureType: 'text',
         signatureDrawData: '',
         fontStyle: 'font-signature3',
+        hasSigned: true,
       });
       setLoan(prev => ({
         ...prev,
@@ -478,7 +694,68 @@ export default function App() {
       }
     };
 
-    const currentT = tWord[activeLang];
+    const currentT = (() => {
+      if (['FR', 'IT', 'EN'].includes(styling.language)) {
+        return tWord[styling.language as 'FR' | 'IT' | 'EN'];
+      }
+      if (styling.language === 'BOTH') {
+        return tWord.FR;
+      }
+      // If we have custom translations loaded in customTranslationsWord
+      if (customTranslationsWord) {
+        const raw = customTranslationsWord;
+        return {
+          ...raw,
+          refLine: raw.refLine || "ACTE NOTARIÉ CIVIL D'ENREGISTREMENT SYSTÉMIQUE :",
+          procedureBody: (raw.procedureBody || "")
+            .replace("[NOTARY_NAME]", `<strong>${notary.name}</strong>`)
+            .replace("[NOTARY_ADDRESS]", `<strong>${notary.address}</strong>`)
+            .replace("[NOTARY_LICENSE]", `<strong>N° ${loan.notaryLicense || notary.idNumber}</strong>`),
+          incomeValue: (raw.incomeValue || "")
+            .replace("[MONTHLY_INCOME]", borrower.monthlyIncome ? borrower.monthlyIncome.toLocaleString() : 'N/C')
+            .replace("[CURRENCY]", loan.currency),
+          sec21Body: (raw.sec21Body || "")
+            .replace("[PRINCIPAL]", `<strong>${formatM(principal)}</strong>`)
+            .replace("[FUND_PURPOSE]", `<strong>${loan.fundPurpose}</strong>`),
+          sec22Body: (raw.sec22Body || "")
+            .replace("[RATE]", `<strong>${rate}%</strong>`)
+            .replace("[DURATION]", `<strong>${duration} mois</strong>`)
+            .replace("[TOTAL_INTEREST]", `<strong>${formatM(totalInterest)}</strong>`),
+          sec23Body_start: (raw.sec23Body_start || "")
+            .replace("[TOTAL_REPAYABLE]", `<strong>${formatM(totalRepayable)}</strong>`)
+            .replace("[REPAYMENT_FREQUENCY]", `<strong>${loan.repaymentFrequency.toUpperCase()}</strong>`),
+          sec23Body_mensuel: (raw.sec23Body_mensuel || "")
+            .replace("[DURATION]", String(duration))
+            .replace("[INSTALLMENT_PAYMENT]", `<strong>${formatM(installmentPayment)}</strong>`),
+          sec23Body_trimestriel: (raw.sec23Body_trimestriel || "")
+            .replace("[INSTALLMENT_PAYMENT]", `<strong>${formatM(installmentPayment)}</strong>`),
+          sec23Body_unique: (raw.sec23Body_unique || ""),
+          sec23Body_dates: (raw.sec23Body_dates || "")
+            .replace("[FIRST_REPAYMENT_DATE]", `<strong>${firstDateFormatted}</strong>`)
+            .replace("[FINAL_REPAYMENT_DATE]", `<strong>${finalDateFormatted}</strong>`),
+          penaltyFixed: (raw.penaltyFixed || "")
+            .replace("[PENALTY_FIXED_AMOUNT]", `<strong>${formatM(loan.penaltyFixedAmount)}</strong>`),
+          penaltyRate: (raw.penaltyRate || "")
+            .replace("[PENALTY_RATE]", `<strong>${loan.penaltyRate}</strong>`),
+          section4Body: (raw.section4Body || "")
+            .replace("[FEE_AMOUNT]", `<strong>${formatM(loan.feeAmount)}</strong>`)
+            .replace("[TVA_RATE]", `<strong>${loan.tvaRate}</strong>`)
+            .replace("[TVA_AMOUNT]", `<strong>${formatM(tvaAmount)}</strong>`)
+            .replace("[TOTAL_WITH_TAXES]", `<strong>${formatM(totalWithTaxes)}</strong>`),
+          labelDone: (raw.labelDone || "")
+            .replace("[CITY]", loan.city)
+            .replace("[COUNTRY]", loan.country)
+            .replace("[SIGNATURE_DATE]", signatureDateFormatted),
+          stampNotarySig: (raw.stampNotarySig || "")
+            .replace("[NOTARY_NAME]", notary.name),
+          section5Body: (raw.section5Body || "")
+            .replace("[FEE_AMOUNT]", `<strong>${formatM(loan.feeAmount)}</strong>`)
+            .replace("[PRINCIPAL]", `<strong>${formatM(principal)}</strong>`)
+        };
+      }
+      // Failover to French if custom not loaded yet
+      return tWord.FR;
+    })();
 
     // High fidelity DOC structure matching the administrative layout
     const fileHtml = `
@@ -913,12 +1190,8 @@ export default function App() {
                 <path d="M92,75 Q97,78 102,75" fill="none" />
                 <circle cx="75" cy="50" r="2.5" />
               </g>
-              <text x="75" y="44" font-family="serif" font-size="6.5" font-weight="bold" text-anchor="middle" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}">
-                OFFICIEL
-              </text>
-              <text x="75" y="105" font-family="serif" font-size="6" font-style="italic" text-anchor="middle" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}">
-                Sceau d'État
-              </text>
+              <text x="75" y="67" font-family="serif" font-size="6.5" font-weight="bold" text-anchor="middle" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}">${activeLang === 'FR' ? "HOMOLOGUÉ" : activeLang === 'IT' ? "OMOLOGATO" : "COMMISSIONED"}</text>
+              <text x="75" y="82" font-family="serif" font-size="6.5" font-weight="bold" text-anchor="middle" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}">${activeLang === 'FR' ? "SCEAU CIVIL" : activeLang === 'IT' ? "SIGILLO CIVILE" : "STATE SEAL"}</text>
             </svg>
           </div>
         ` : ''}
@@ -934,7 +1207,23 @@ export default function App() {
         htmlWithEditor = fileHtml.replace(
           '</head>',
           `  <style>
-               @media print { .print-hidden { display: none !important; } }
+               @media print {
+                 * {
+                   -webkit-print-color-adjust: exact !important;
+                   print-color-adjust: exact !important;
+                 }
+                 body {
+                   -webkit-print-color-adjust: exact !important;
+                   print-color-adjust: exact !important;
+                 }
+                 .print-hidden { display: none !important; }
+               }
+               .background-watermark {
+                 background-image: url('...');
+                 background-repeat: no-repeat;
+                 background-position: center;
+                 background-size: contain;
+               }
                [contenteditable="true"]:focus { outline: 2px dashed #f59e0b; background-color: rgba(245, 158, 11, 0.05); }
              </style>
            </head>`
@@ -947,7 +1236,23 @@ export default function App() {
         htmlWithEditor = fileHtml.replace(
           '</head>',
           `  <style>
-               @media print { .print-hidden { display: none !important; } }
+               @media print {
+                 * {
+                   -webkit-print-color-adjust: exact !important;
+                   print-color-adjust: exact !important;
+                 }
+                 body {
+                   -webkit-print-color-adjust: exact !important;
+                   print-color-adjust: exact !important;
+                 }
+                 .print-hidden { display: none !important; }
+               }
+               .background-watermark {
+                 background-image: url('...');
+                 background-repeat: no-repeat;
+                 background-position: center;
+                 background-size: contain;
+               }
              </style>
            </head>`
         ).replace(
@@ -965,8 +1270,8 @@ export default function App() {
       tmpAnchor.href = url;
 
       const filePrefix = exportMode === 'editable'
-        ? (activeLang === 'FR' ? 'contrat_pret_modifiable_android_' : activeLang === 'IT' ? 'contratto_prestito_modificabile_' : 'editable_loan_agreement_')
-        : (activeLang === 'FR' ? 'contrat_pret_officiel_fige_android_' : activeLang === 'IT' ? 'contratto_prestito_fissato_' : 'official_non_editable_loan_agreement_');
+        ? (styling.language === 'FR' ? 'contrat_pret_modifiable_android_' : styling.language === 'IT' ? 'contratto_prestito_modificabile_' : styling.language === 'EN' ? 'editable_loan_agreement_' : `contrat_pret_modifiable_${(styling.customLanguageLabel || styling.language).toLowerCase()}_`)
+        : (styling.language === 'FR' ? 'contrat_pret_officiel_fige_android_' : styling.language === 'IT' ? 'contratto_prestito_fissato_' : styling.language === 'EN' ? 'official_non_editable_loan_agreement_' : `contrat_officiel_fige_${(styling.customLanguageLabel || styling.language).toLowerCase()}_`);
       
       tmpAnchor.download = `${filePrefix}${lender.name.replace(/\s+/g, '_')}_${borrower.name.replace(/\s+/g, '_')}.html`;
       
@@ -975,13 +1280,13 @@ export default function App() {
       document.body.removeChild(tmpAnchor);
       
       const feedbackMsg = exportMode === 'editable'
-        ? (activeLang === 'FR' ? "Format HTML Éditable (.html) généré ! Ouvrez-le directement sur votre Android ou PC pour modifier librement et imprimer en PDF propre."
-           : activeLang === 'IT' ? "Documento HTML modificabile (.html) generato! Aprilo direttamente su Android o PC per modificare e stampare come PDF sano."
-           : "Editable HTML document (.html) successfully generated! Open it on Android or PC to edit and print to PDF.")
-        : (activeLang === 'FR' ? "Format HTML Officiel Figé (.html) généré sous forme sécurisée non modifiable !"
-           : activeLang === 'IT' ? "Documento HTML ufficiale fissato (.html) scaricato con successo!"
-           : "Official secure non-editable HTML document (.html) generated successfully!");
-        
+        ? (styling.language === 'FR' ? "Format HTML Éditable (.html) généré ! Ouvrez-le directement sur votre Android ou PC pour modifier librement et imprimer en PDF propre."
+           : styling.language === 'IT' ? "Documento HTML modificabile (.html) generato! Aprilo direttamente su Android o PC per modificare e stampare comme PDF sano."
+           : `Format HTML Éditable (${styling.customLanguageLabel || styling.language}) généré avec succès !`)
+        : (styling.language === 'FR' ? "Format HTML Officiel Figé (.html) généré sous forme sécurisée non modifiable !"
+           : styling.language === 'IT' ? "Documento HTML ufficiale fissato (.html) scaricato con successo!"
+           : `Document d'Acte Officiel Figé (${styling.customLanguageLabel || styling.language}) généré avec succès !`);
+         
       setBannerAlert(feedbackMsg);
     } else {
       // Package as Word Document (.doc) - with a custom filename according to selected language
@@ -994,8 +1299,8 @@ export default function App() {
       tmpAnchor.href = url;
 
       const filePrefix = exportMode === 'editable'
-        ? (activeLang === 'FR' ? 'contrat_pret_notarie_modifiable_' : activeLang === 'IT' ? 'contratto_prestito_notarile_modificabile_' : 'editable_notarial_loan_agreement_')
-        : (activeLang === 'FR' ? 'contrat_pret_notarie_officiel_fige_' : activeLang === 'IT' ? 'contratto_prestito_notarile_originale_' : 'original_secured_loan_agreement_');
+        ? (styling.language === 'FR' ? 'contrat_pret_notarie_modifiable_' : styling.language === 'IT' ? 'contratto_prestito_notarile_modificabile_' : styling.language === 'EN' ? 'editable_notarial_loan_agreement_' : `contrat_notarie_modifiable_${(styling.customLanguageLabel || styling.language).toLowerCase()}_`)
+        : (styling.language === 'FR' ? 'contrat_pret_notarie_officiel_fige_' : styling.language === 'IT' ? 'contratto_prestito_notarile_originale_' : styling.language === 'EN' ? 'original_secured_loan_agreement_' : `contrat_notarie_officiel_${(styling.customLanguageLabel || styling.language).toLowerCase()}_`);
       
       tmpAnchor.download = `${filePrefix}${lender.name.replace(/\s+/g, '_')}_${borrower.name.replace(/\s+/g, '_')}.doc`;
       
@@ -1004,23 +1309,31 @@ export default function App() {
       document.body.removeChild(tmpAnchor);
       
       const feedbackMsg = exportMode === 'editable'
-        ? (activeLang === 'FR' ? "Version Word (.doc) Modifiable générée ! Idéal pour Microsoft Word sur ordinateur PC."
-           : activeLang === 'IT' ? "Versione Word (.doc) modificabile scaricata con successo! Consigliata per Microsoft Word su PC."
-           : "Editable Word (.doc) version successfully generated and downloaded for full customization!")
-        : (activeLang === 'FR' ? "Version Word (.doc) Officielle Figée générée ! Protégée contre les déréglages involontaires."
-           : activeLang === 'IT' ? "Versione Word (.doc) ufficiale fissa scaricata! Consigliata per Microsoft Word su PC."
-           : "Official secure non-editable Word (.doc) version successfully generated and downloaded!");
-        
+        ? (styling.language === 'FR' ? "Version Word (.doc) Modifiable générée ! Idéal pour Microsoft Word sur ordinateur PC."
+           : styling.language === 'IT' ? "Versione Word (.doc) modificabile scaricata con successo! Consigliata per Microsoft Word su PC."
+           : `Version Word (.doc) Modifiable en ${styling.customLanguageLabel || styling.language} générée avec succès !`)
+        : (styling.language === 'FR' ? "Version Word (.doc) Officielle Figée générée ! Protégée contre les déréglages involontaires."
+           : styling.language === 'IT' ? "Versione Word (.doc) ufficiale fissa scaricata! Consigliata per Microsoft Word su PC."
+           : `Version Word (.doc) Officielle en ${styling.customLanguageLabel || styling.language} générée avec succès !`);
+         
       setBannerAlert(feedbackMsg);
     }
   };
 
   return (
-    <div id="notary-app-root" className="min-h-screen bg-[#0f172a] text-slate-100 flex flex-col h-screen overflow-hidden print:bg-white print:h-auto print:overflow-visible">
+    <div id="notary-app-root" className={`min-h-screen bg-[#0f172a] text-slate-100 flex flex-col print:bg-white print:h-auto print:overflow-visible ${isGenerated ? 'h-auto overflow-y-auto' : 'h-screen overflow-hidden'}`}>
       
       {/* GLOBAL CSS CUSTOM OVERRIDES AND ANIMATIONS */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
           body, html, #notary-app-root, #action-menu-view-contract {
             background: white !important;
             color: black !important;
@@ -1046,13 +1359,16 @@ export default function App() {
             margin: 0 !important;
             overflow: visible !important;
           }
-          #printed-contract-sheet * {
-            print-color-adjust: exact !important;
-            -webkit-print-color-adjust: exact !important;
-          }
+        }
+
+        .background-watermark {
+          background-image: url('...');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
         }
         
-        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=La+Belle+Aurore&family=Reenie+Beanie&family=Nothing+You+Could+Do&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght=500;700&family=La+Belle+Aurore&family=Reenie+Beanie&family=Nothing+You+Could+Do&display=swap');
         
         .font-signature1 { font-family: 'Caveat', cursive; font-weight: 700; }
         .font-signature2 { font-family: 'La Belle Aurore', cursive; }
@@ -1117,7 +1433,7 @@ export default function App() {
       )}
 
       {/* CORE CONTENT SPLIT ACCORDING TO USER'S DIRECTIVE GOAL */}
-      <div className="flex-1 overflow-hidden print:overflow-visible flex flex-col">
+      <div className={`flex-1 print:overflow-visible flex flex-col ${isGenerated ? 'overflow-visible h-auto' : 'overflow-hidden'}`}>
         {!isGenerated ? (
           
           /* ==========================================
@@ -1741,6 +2057,75 @@ export default function App() {
                       </div>
                     </div>
 
+                    {/* Language and Translation selector */}
+                    <div className="p-4 bg-slate-950/20 border border-slate-850 rounded-lg space-y-3.5">
+                      <div>
+                        <span className="text-xs font-bold text-slate-300 block">Langue officielle de l'Acte de Prêt</span>
+                        <span className="text-[10px] text-zinc-500 block">Déterminez la langue d'origine ou traduisez en direct d'autres langues via l'IA Gemini.</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-[11px] text-zinc-400 font-medium block mb-1">Langue de base</label>
+                          <select 
+                            value={styling.language === 'CUSTOM' ? 'CUSTOM' : styling.language} 
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val === 'CUSTOM') {
+                                handleLanguageChange('CUSTOM');
+                              } else {
+                                handleLanguageChange(val as any);
+                              }
+                            }}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white"
+                          >
+                            <option value="FR">Français 🇫🇷 (Conseillé par défaut)</option>
+                            <option value="IT">Italien 🇮🇹</option>
+                            <option value="EN">Anglais 🇬🇧</option>
+                            <option value="ES">Espagnol 🇪🇸</option>
+                            <option value="DE">Allemand 🇩🇪</option>
+                            <option value="PT">Portugais 🇵🇹</option>
+                            <option value="NL">Néerlandais 🇳🇱</option>
+                            <option value="PL">Polonais 🇵🇱</option>
+                            <option value="RO">Roumain 🇷🇴</option>
+                            <option value="CUSTOM">Option Traduction IA Personnalisée 🤖</option>
+                          </select>
+                        </div>
+                        
+                        {(styling.language === 'CUSTOM' || !['FR', 'IT', 'EN', 'ES', 'DE', 'PT', 'NL', 'PL', 'RO', 'BOTH'].includes(styling.language)) && (
+                          <div className="space-y-1">
+                            <label className="text-[11px] text-zinc-400 font-medium block mb-1">Traduire dans n'importe quelle langue (ex: Arabe, Chinois, Russe, etc.)</label>
+                            <div className="flex gap-2">
+                              <input 
+                                type="text"
+                                placeholder="Saisir la langue..."
+                                defaultValue={styling.customLanguageLabel || ''}
+                                onBlur={(e) => {
+                                  const val = e.target.value.trim();
+                                  if (val && val !== styling.customLanguageLabel) {
+                                    handleLangToggleAndTranslate(val);
+                                  }
+                                }}
+                                className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {isTranslating ? (
+                        <div className="p-2.5 bg-slate-950 border border-slate-850 rounded-md text-xs text-amber-400 flex items-center gap-2 font-mono">
+                          <RefreshCw className="h-4.5 w-4.5 animate-spin" />
+                          Configuration et traduction IA en cours d'exécution...
+                        </div>
+                      ) : (
+                        styling.language === 'CUSTOM' && styling.customLanguageLabel && (
+                          <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-md text-xs text-amber-300">
+                            ✨ Le contrat est parfaitement configuré pour être généré et exporté en <strong>{styling.customLanguageLabel}</strong>.
+                          </div>
+                        )
+                      )}
+                    </div>
+
                     {/* Pre-signature for Notary */}
                     <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div>
@@ -1806,7 +2191,7 @@ export default function App() {
           /* ==========================================
              STAGE B: DOCUMENT GENERATED & SUBLIME VIEW
              ========================================== */
-          <div id="action-menu-view-contract" className="flex-1 flex flex-col min-h-0 bg-[#0f172a] print:bg-white">
+          <div id="action-menu-view-contract" className="flex-1 flex flex-col bg-[#0f172a] print:bg-white">
             
             {/* Top high-end administrative action control dashboard */}
             <div className="bg-slate-950/90 border-b border-slate-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden flex-shrink-0">
@@ -1857,6 +2242,95 @@ export default function App() {
 
             </div>
 
+            {/* Live Translation Bar */}
+            <div className="bg-slate-950 border-b border-slate-850 px-6 py-2.5 flex flex-col md:flex-row items-center justify-between gap-3 print:hidden flex-shrink-0 text-xs">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-amber-500 animate-pulse" />
+                <span className="text-slate-300 font-bold">Traducteur IA Gemini (Optionnel) :</span>
+                <span className="text-slate-400 text-[11px]">Traduire l'acte juridique généré dans n'importe quelle langue avant l'exportation.</span>
+              </div>
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <select
+                  value={styling.language === 'CUSTOM' ? (styling.customLanguageLabel || 'CUSTOM_PROMPT') : styling.language}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (!val) return;
+                    if (['FR', 'IT', 'EN'].includes(val)) {
+                      handleLanguageChange(val as any);
+                    } else if (val === 'CUSTOM_PROMPT') {
+                      handleLanguageChange('CUSTOM');
+                    } else {
+                      handleLangToggleAndTranslate(val);
+                    }
+                  }}
+                  className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 h-9"
+                >
+                  <option value="">-- Sélectionner n'importe quelle langue pour traduire --</option>
+                  <option value="FR">Français 🇫🇷 (Défaut)</option>
+                  <option value="IT">Italien 🇮🇹</option>
+                  <option value="EN">Anglais 🇬🇧</option>
+                  <option value="Espagnol">Espagnol 🇪🇸</option>
+                  <option value="Allemand">Allemand 🇩🇪</option>
+                  <option value="Portugais">Portugais 🇵🇹</option>
+                  <option value="Néerlandais">Néerlandais 🇳🇱</option>
+                  <option value="Polonais">Polonais 🇵🇱</option>
+                  <option value="Roumain">Roumain 🇷🇴</option>
+                  <option value="Arabe">Arabe 🇸🇦</option>
+                  <option value="Russe">Russe 🇷🇺</option>
+                  <option value="Chinois">Chinois 🇨🇳</option>
+                  <option value="Japonais">Japonais 🇯🇵</option>
+                  <option value="Turc">Turc 🇹🇷</option>
+                  <option value="Vietnamien">Vietnamien 🇻🇳</option>
+                  <option value="Portugais Brésil">Portugais (Brésil) 🇧🇷</option>
+                  <option value="Coréen">Coréen 🇰🇷</option>
+                  <option value="Grec">Grec 🇬🇷</option>
+                  <option value="Suédois">Suédois 🇸🇪</option>
+                  <option value="Hindi">Hindi 🇮🇳</option>
+                  <option value="Ukrainien">Ukrainien 🇺🇦</option>
+                  <option value="Persan">Persan 🇮🇷</option>
+                  <option value="CUSTOM_PROMPT">✍️ Saisir une autre langue spécifique...</option>
+                </select>
+
+                {(styling.language === 'CUSTOM' || styling.language === 'CUSTOM_PROMPT') && (
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="text"
+                      placeholder="Saisir la langue..."
+                      defaultValue={styling.customLanguageLabel || ''}
+                      onBlur={(e) => {
+                        const val = e.target.value.trim();
+                        if (val && val !== styling.customLanguageLabel) {
+                          handleLangToggleAndTranslate(val);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const val = (e.target as HTMLInputElement).value.trim();
+                          if (val && val !== styling.customLanguageLabel) {
+                            handleLangToggleAndTranslate(val);
+                          }
+                        }
+                      }}
+                      className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 h-9 w-36"
+                    />
+                  </div>
+                )}
+
+                {isTranslating ? (
+                  <div className="flex items-center gap-1 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 text-amber-400 font-bold font-mono h-9">
+                    <RefreshCw className="h-3 w-3 animate-spin text-amber-400" />
+                    En cours...
+                  </div>
+                ) : (
+                  styling.language === 'CUSTOM' && styling.customLanguageLabel && (
+                    <div className="hidden lg:flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg text-amber-300 font-semibold font-mono h-9">
+                      Contrat traduit en « {styling.customLanguageLabel} »
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+
             {/* Version choice bar (locked vs editable) */}
             <div className="bg-slate-900 border-b border-slate-800 px-6 py-3 flex flex-col md:flex-row items-center justify-between gap-3 print:hidden flex-shrink-0">
               <div className="flex items-center gap-2">
@@ -1900,7 +2374,7 @@ export default function App() {
             </div>
 
             {/* A4 PAPER CONTRACT RENDERING SPACE */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-[#151c2c] print:p-0 print:bg-white">
+            <div className="p-4 sm:p-8 bg-[#151c2c] print:p-0 print:bg-white overflow-visible h-auto">
               <div id="document-paper-box" className="mx-auto max-w-3xl border border-slate-850 shadow-2xl rounded-sm">
                 
                 {/* Real-time document rendering info */}

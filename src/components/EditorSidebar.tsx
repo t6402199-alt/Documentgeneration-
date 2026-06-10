@@ -35,6 +35,8 @@ interface EditorSidebarProps {
   onDownloadWord: () => void;
   onPrintPDF: () => void;
   onTriggerPreset: (presetName: string) => void;
+  onTriggerAITranslation: (targetLang: string) => Promise<void>;
+  isTranslating: boolean;
 }
 
 export function EditorSidebar({
@@ -53,8 +55,12 @@ export function EditorSidebar({
   onDownloadWord,
   onPrintPDF,
   onTriggerPreset,
+  onTriggerAITranslation,
+  isTranslating,
 }: EditorSidebarProps) {
   const [activeTab, setActiveTab] = useState<'parties' | 'financial' | 'design' | 'presets'>('parties');
+  const [selectedLangOption, setSelectedLangOption] = useState<string>('');
+  const [customLangInput, setCustomLangInput] = useState<string>('');
 
   // Interactive local states or direct bindings to inputs
   const handleLenderChange = (key: keyof PartyDetails, value: string) => {
@@ -507,11 +513,13 @@ export function EditorSidebar({
             </h3>
 
             {/* Language Selector */}
-            <div>
-              <label className="text-xs text-slate-300 font-medium block mb-2">Langue de l'Acte Juridique</label>
+            <div className="space-y-3">
+              <label className="text-xs text-slate-300 font-medium block mb-1">Langue de l'Acte Juridique (Régularisation)</label>
+              
               <div className="grid grid-cols-3 gap-1.5 bg-slate-950 p-1 border border-slate-800 rounded-lg">
                 <button
                   id="lang-btn-fr"
+                  type="button"
                   onClick={() => handleStylingChange('language', 'FR')}
                   className={`py-1.5 text-xs rounded-md font-medium transition-colors ${styling.language === 'FR' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
                 >
@@ -519,6 +527,7 @@ export function EditorSidebar({
                 </button>
                 <button
                   id="lang-btn-it"
+                  type="button"
                   onClick={() => handleStylingChange('language', 'IT')}
                   className={`py-1.5 text-xs rounded-md font-medium transition-colors ${styling.language === 'IT' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
                 >
@@ -526,12 +535,105 @@ export function EditorSidebar({
                 </button>
                 <button
                   id="lang-btn-en"
+                  type="button"
                   onClick={() => handleStylingChange('language', 'EN')}
                   className={`py-1.5 text-xs rounded-md font-medium transition-colors ${styling.language === 'EN' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
                 >
                   Anglais
                 </button>
               </div>
+
+              {/* Advanced Translation Panel */}
+              <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800 space-y-2">
+                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest flex items-center gap-1">
+                  <Sparkles className="h-3 w-3 text-amber-500 animate-pulse" />
+                  Système de Traduction Globale (IA)
+                </span>
+                
+                <select
+                  value={selectedLangOption}
+                  onChange={(e) => {
+                    setSelectedLangOption(e.target.value);
+                    if (e.target.value && e.target.value !== 'CUSTOM_INPUT') {
+                      const codeMapping: { [key: string]: string } = {
+                        'Espagnol': 'ES',
+                        'Allemand': 'DE',
+                        'Portugais': 'PT',
+                        'Néerlandais': 'NL',
+                        'Polonais': 'PL',
+                        'Roumain': 'RO'
+                      };
+                      if (codeMapping[e.target.value]) {
+                        handleStylingChange('language', codeMapping[e.target.value]);
+                        onTriggerAITranslation(e.target.value);
+                      }
+                    }
+                  }}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                >
+                  <option value="">-- Choisir n'importe quelle langue --</option>
+                  <option value="Espagnol">Espagnol 🇪🇸</option>
+                  <option value="Allemand">Allemand 🇩🇪</option>
+                  <option value="Portugais">Portugais 🇵🇹</option>
+                  <option value="Néerlandais">Néerlandais 🇳🇱</option>
+                  <option value="Polonais">Polonais 🇵🇱</option>
+                  <option value="Roumain">Roumain 🇷🇴</option>
+                  <option value="Arabe">Arabe 🇸🇦</option>
+                  <option value="Russe">Russe 🇷🇺</option>
+                  <option value="Chinois">Chinois 🇨🇳</option>
+                  <option value="Japonais">Japonais 🇯🇵</option>
+                  <option value="Turc">Turc 🇹🇷</option>
+                  <option value="Vietnamien">Vietnamien 🇻🇳</option>
+                  <option value="Portugais Brésil">Portugais (Brésil) 🇧🇷</option>
+                  <option value="Coréen">Coréen 🇰🇷</option>
+                  <option value="Grec">Grec 🇬🇷</option>
+                  <option value="Suédois">Suédois 🇸🇪</option>
+                  <option value="Hindi">Hindi 🇮🇳</option>
+                  <option value="Ukrainien">Ukrainien 🇺🇦</option>
+                  <option value="Persan">Persan 🇮🇷</option>
+                  <option value="CUSTOM_INPUT">✍️ Autre langue (Saisir...)</option>
+                </select>
+
+                {selectedLangOption === 'CUSTOM_INPUT' && (
+                  <input
+                    type="text"
+                    value={customLangInput}
+                    onChange={(e) => setCustomLangInput(e.target.value)}
+                    placeholder="Ex: Slovaque, Thaï, Bulgare..."
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                  />
+                )}
+
+                <button
+                  type="button"
+                  disabled={isTranslating || !selectedLangOption || (selectedLangOption === 'CUSTOM_INPUT' && !customLangInput)}
+                  onClick={() => {
+                    const lang = selectedLangOption === 'CUSTOM_INPUT' ? customLangInput : selectedLangOption;
+                    if (lang) {
+                      onTriggerAITranslation(lang);
+                    }
+                  }}
+                  className="w-full py-1.5 px-3 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-extrabold text-xs rounded-md transition-all flex items-center justify-center gap-1.5 uppercase shadow-sm cursor-pointer"
+                >
+                  {isTranslating ? (
+                    <>
+                      <RefreshCw className="h-3 w-3 animate-spin" />
+                      Traduction en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-3 w-3" />
+                      Traduire avec Gemini
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {styling.language === 'CUSTOM' && styling.customLanguageLabel && (
+                <div className="p-2 bg-amber-500/10 border border-amber-500/20 rounded-md text-[11px] text-amber-200">
+                  Le contrat est actuellement traduit en <strong className="text-amber-400">{styling.customLanguageLabel}</strong> via l'IA.
+                </div>
+              )}
             </div>
 
             {/* Corner Flag Selectors */}

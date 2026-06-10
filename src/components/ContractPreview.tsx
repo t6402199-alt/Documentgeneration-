@@ -920,9 +920,39 @@ export function ContractPreview({
   exportMode = 'official',
 }: ContractPreviewProps) {
   
+  // Helper to map CUSTOM language label to basic locale keys
+  const resolveLangCode = (lang: string, customLabel?: string): string => {
+    if (lang !== 'CUSTOM') {
+      return lang;
+    }
+    if (!customLabel) return 'FR';
+    const cl = customLabel.toLowerCase();
+    if (cl.includes('fr') || cl.includes('fran')) return 'FR';
+    if (cl.includes('it') || cl.includes('ital')) return 'IT';
+    if (cl.includes('es') || cl.includes('esp')) return 'ES';
+    if (cl.includes('de') || cl.includes('all') || cl.includes('deutsch') || cl.includes('ger')) return 'DE';
+    if (cl.includes('pt') || cl.includes('port')) return 'PT';
+    if (cl.includes('nl') || cl.includes('neer') || cl.includes('dutch') || cl.includes('hol')) return 'NL';
+    if (cl.includes('pl') || cl.includes('pol')) return 'PL';
+    if (cl.includes('ro') || cl.includes('rou') || cl.includes('rum') || cl.includes('rom')) return 'RO';
+    if (cl.includes('en') || cl.includes('ang') || cl.includes('eng')) return 'EN';
+    return 'FR'; // default fallback for date/unspecified structures
+  };
+
   // Resolve active language cleanly
-  const languageCode = (styling.language === 'BOTH' ? 'FR' : styling.language) as 'FR' | 'IT' | 'EN' | 'ES' | 'DE' | 'PT' | 'NL' | 'PL' | 'RO';
-  const t = translations[languageCode];
+  const languageCode = (styling.language === 'BOTH' ? 'FR' : styling.language);
+  const matchedBaseCode = resolveLangCode(languageCode, styling.customLanguageLabel);
+
+  const t = (() => {
+    if (languageCode === 'CUSTOM' && styling.customTranslations) {
+      return {
+        ...translations.FR,
+        ...styling.customTranslations
+      };
+    }
+    const code = matchedBaseCode as keyof typeof translations;
+    return translations[code] || translations.FR;
+  })();
 
   // Helper locales definitions
   const getLocale = (lang: string) => {
@@ -989,7 +1019,7 @@ export function ContractPreview({
   const totalWithTaxes = totalRepayable + tvaAmount;
 
   const formatMoney = (val: number) => {
-    const locale = getLocale(languageCode);
+    const locale = getLocale(matchedBaseCode);
     return `${val.toLocaleString(locale, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ${loan.currency}`;
   };
 
@@ -998,16 +1028,16 @@ export function ContractPreview({
     fontFamily === 'mono' ? 'font-mono' : 'font-sans';
 
   const signatureDateFormatted = loan.dateSigned 
-    ? new Date(loan.dateSigned).toLocaleDateString(getLocale(languageCode), { day: 'numeric', month: 'long', year: 'numeric' })
-    : getDefaultDate(languageCode);
+    ? new Date(loan.dateSigned).toLocaleDateString(getLocale(matchedBaseCode), { day: 'numeric', month: 'long', year: 'numeric' })
+    : getDefaultDate(matchedBaseCode);
 
   const firstDateFormatted = loan.firstRepaymentDate
-    ? new Date(loan.firstRepaymentDate).toLocaleDateString(getLocale(languageCode), { day: 'numeric', month: 'long', year: 'numeric' })
-    : getUnspecifiedDate(languageCode);
+    ? new Date(loan.firstRepaymentDate).toLocaleDateString(getLocale(matchedBaseCode), { day: 'numeric', month: 'long', year: 'numeric' })
+    : getUnspecifiedDate(matchedBaseCode);
 
   const finalDateFormatted = loan.finalRepaymentDate
-    ? new Date(loan.finalRepaymentDate).toLocaleDateString(getLocale(languageCode), { day: 'numeric', month: 'long', year: 'numeric' })
-    : getUnspecifiedDate(languageCode);
+    ? new Date(loan.finalRepaymentDate).toLocaleDateString(getLocale(matchedBaseCode), { day: 'numeric', month: 'long', year: 'numeric' })
+    : getUnspecifiedDate(matchedBaseCode);
 
   return (
     <div id="contract-paper-a4-viewport" className="p-1 sm:p-4 bg-slate-100 flex justify-center overflow-x-auto w-full print:overflow-visible print:p-0 print:bg-white select-text">
@@ -1048,7 +1078,7 @@ export function ContractPreview({
           {/* 1. WATERMARK - Centered scales of justice background */}
           <div 
             id="justice-watermark-overlay"
-            className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0"
+            className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 background-watermark"
             style={{ opacity: styling.watermarkOpacity }}
           >
             <div className="w-[480px] h-[480px] text-amber-600/50 flex items-center justify-center">
@@ -1318,7 +1348,7 @@ export function ContractPreview({
           <div className="border-t border-slate-350 pt-3 mt-4 relative">
             
             {/* Boxed Modular Grid - prevents overlapping completely by locking each in their card boundaries */}
-            <div className="grid grid-cols-3 gap-4 text-center text-[10px] leading-tight select-none mt-2">
+            <div className="grid grid-cols-3 gap-4 text-center text-[10px] leading-tight select-none mt-2 font-mono">
               
               {/* Left Side Column: MUTUATARIO / EMPRUNTEUR */}
               <div 
@@ -1330,21 +1360,23 @@ export function ContractPreview({
                 
                 {/* Visual indicator of manual signature space */}
                 <div className="h-16 flex flex-col items-center justify-center relative bg-white/50 rounded-sm border border-dashed border-stone-200/60 my-1">
-                  {borrower.signatureDrawData ? (
-                    <img 
-                      src={borrower.signatureDrawData} 
-                      alt="Signature Emprunteur" 
-                      className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
-                      style={{ filter: "url(#real-signature-ink)" }}
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : borrower.signatureType === 'text' && borrower.name ? (
-                    <span 
-                      className={`text-sm text-emerald-800 font-bold select-none cursor-pointer ${borrower.fontStyle || 'font-signature1'}`}
-                      style={{ filter: "url(#real-signature-ink)" }}
-                    >
-                      {borrower.name}
-                    </span>
+                  {borrower.hasSigned ? (
+                    borrower.signatureDrawData ? (
+                      <img 
+                        src={borrower.signatureDrawData} 
+                        alt="Signature Emprunteur" 
+                        className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
+                        style={{ filter: "url(#real-signature-ink)" }}
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <span 
+                        className={`text-sm text-emerald-800 font-bold select-none cursor-pointer ${borrower.fontStyle || 'font-signature1'}`}
+                        style={{ filter: "url(#real-signature-ink)" }}
+                      >
+                        {borrower.name}
+                      </span>
+                    )
                   ) : (
                     <div className="w-20 border-b border-dashed border-stone-300 absolute bottom-3"></div>
                   )}
@@ -1362,26 +1394,25 @@ export function ContractPreview({
                 {/* Beautiful dynamic cursive signature of the Prestatore overlapping with the company stamp */}
                 <div className="h-16 w-full flex items-center justify-center relative">
                   {/* Signature */}
-                  {lender.signatureDrawData ? (
-                    <img 
-                      src={lender.signatureDrawData} 
-                      alt="Signature Prêteur" 
-                      className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
-                      style={{ filter: "url(#real-signature-ink)" }}
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : lender.signatureType === 'text' && lender.name ? (
-                    <span 
-                      className={`text-sm text-blue-800 font-bold select-none cursor-pointer z-10 ${lender.fontStyle || 'font-signature2'}`}
-                      style={{ filter: "url(#real-signature-ink)" }}
-                    >
-                      {lender.name}
-                    </span>
+                  {lender.hasSigned ? (
+                    lender.signatureDrawData ? (
+                      <img 
+                        src={lender.signatureDrawData} 
+                        alt="Signature Prêteur" 
+                        className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
+                        style={{ filter: "url(#real-signature-ink)" }}
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <span 
+                        className={`text-sm text-blue-800 font-bold select-none cursor-pointer z-10 ${lender.fontStyle || 'font-signature2'}`}
+                        style={{ filter: "url(#real-signature-ink)" }}
+                      >
+                        {lender.name}
+                      </span>
+                    )
                   ) : (
-                    <svg className="w-[110px] h-10 text-blue-850 absolute z-10 opacity-90" style={{ filter: "url(#real-signature-ink)" }} viewBox="0 0 140 50" fill="none">
-                      <path d="M10,25 Q35,8 45,32 Q75,4 95,28 T130,12 M35,22 L115,26" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                      <path d="M15,15 Q65,42 125,20" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.6" />
-                    </svg>
+                    <div className="w-20 border-b border-dashed border-stone-300 absolute bottom-3"></div>
                   )}
 
                   {/* Rubber seal / Blue stamp */}
@@ -1423,27 +1454,33 @@ export function ContractPreview({
                 {/* Beautiful dynamic cursive signature of the Notary overlapping with the red seal */}
                 <div className="h-16 w-full flex items-center justify-center relative">
                   {/* Signature */}
-                  {notary.signatureDrawData ? (
-                    <img 
-                      src={notary.signatureDrawData} 
-                      alt="Signature Notaire" 
-                      className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
-                      style={{ filter: "url(#real-signature-ink)" }}
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : notary.signatureType === 'text' && notary.name ? (
-                    <span 
-                      className={`text-sm text-[#133c87] font-bold select-none cursor-pointer z-10 ${notary.fontStyle || 'font-signature3'}`}
-                      style={{ filter: "url(#real-signature-ink)" }}
-                    >
-                      {notary.name}
-                    </span>
+                  {notary.hasSigned ? (
+                    notary.signatureDrawData ? (
+                      <img 
+                        src={notary.signatureDrawData} 
+                        alt="Signature Notaire" 
+                        className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
+                        style={{ filter: "url(#real-signature-ink)" }}
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <span 
+                        className={`text-sm text-[#133c87] font-bold select-none cursor-pointer z-10 ${notary.fontStyle || 'font-signature3'}`}
+                        style={{ filter: "url(#real-signature-ink)" }}
+                      >
+                        {notary.name}
+                      </span>
+                    )
                   ) : (
+                    <div className="w-20 border-b border-dashed border-stone-300 absolute bottom-3"></div>
+                  )}
+
+                  {/*
                     <svg className="w-[115px] h-10 text-[#133c87] absolute z-10" style={{ filter: "url(#real-signature-ink)" }} viewBox="0 0 140 50" fill="none">
                       <path d="M12,18 C30,35 60,5 75,32 Q105,4 125,18 M20,38 L120,12" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" />
                       <circle cx="45" cy="22" r="3" stroke="currentColor" strokeWidth="1" fill="none" />
                     </svg>
-                  )}
+                  */}
 
                   {/* Official Notary Round Red Stamp */}
                   <div className="absolute rotate-[8deg] z-20 opacity-85 scale-[0.62] transform origin-center" style={{ filter: "url(#real-stamp-ink)" }}>

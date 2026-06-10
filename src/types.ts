@@ -19,6 +19,7 @@ export interface PartyDetails {
   signatureType: 'text' | 'draw';
   signatureDrawData: string; // Base64 png data or empty
   fontStyle: string; // cursive style name
+  hasSigned?: boolean; // toggle to skip fake signature if not signed
 }
 
 export interface LoanDetails {
@@ -52,7 +53,10 @@ export interface StylingDetails {
   stampText: string;
   subStampText: string;
   showStamp: boolean;
-  language: 'FR' | 'IT' | 'BOTH' | 'EN' | 'ES' | 'DE' | 'PT' | 'NL' | 'PL' | 'RO';
+  language: 'FR' | 'IT' | 'BOTH' | 'EN' | 'ES' | 'DE' | 'PT' | 'NL' | 'PL' | 'RO' | 'CUSTOM';
+  customLanguageLabel?: string;
+  customTranslations?: any;
+  customTranslationsWord?: any;
 }
 
 export interface ArticleContent {
