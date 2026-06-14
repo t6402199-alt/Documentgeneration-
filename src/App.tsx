@@ -21,6 +21,7 @@ import {
   Flame,
   Printer,
   FileDown,
+  Download,
   ChevronRight,
   ChevronLeft,
   Check,
@@ -357,6 +358,14 @@ export default function App() {
   // Signature Modals
   const [sigTarget, setSigTarget] = useState<'lender' | 'borrower' | 'notary' | null>(null);
 
+  // Download status state for mobile feedback and Chrome correction
+  const [downloadState, setDownloadState] = useState<{
+    status: 'idle' | 'preparing' | 'ready';
+    fileName: string;
+    format: 'doc' | 'html';
+    onDownloadTrigger?: () => void;
+  }>({ status: 'idle', fileName: '', format: 'html' });
+
   // Automatically compute loan finalRepaymentDate based on durationMonths & dateSigned
   useEffect(() => {
     if (loan.dateSigned) {
@@ -658,6 +667,48 @@ export default function App() {
       background-color: rgba(245, 158, 11, 0.05);
       border-radius: 4px;
     }
+
+    /* === PRESTIGIOUS HIGH DENSITY ADMINISTRATIVE GUILLOCHÉ / BALANCE === */
+    .document-guilloche-bg {
+      position: relative !important;
+      background-color: #f0f4f8 !important;
+    }
+
+    /* Fond léger - Lignes fines horizontales et verticales */
+    .document-guilloche-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(90deg, rgba(0, 70, 140, 0.04) 1px, transparent 1px),
+        linear-gradient(rgba(0, 80, 150, 0.035) 1px, transparent 1px);
+      background-size: 70px 55px, 55px 70px;
+      opacity: 0.65;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Guillochis courbes principal - Version plus claire et légère */
+    .document-guilloche-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Cdefs%3E%3Cpattern id='guilloche' patternUnits='userSpaceOnUse' width='300' height='300'%3E%3Cpath d='M50 100 Q120 30 200 110 Q280 190 220 260 Q150 320 70 240 Q30 170 80 120' fill='none' stroke='%23004a80' stroke-width='1.8' opacity='0.09'/%3E%3Cpath d='M80 180 Q160 110 250 160 Q340 220 260 290 Q180 340 100 260' fill='none' stroke='%23006ab0' stroke-width='1.3' opacity='0.07'/%3E%3Cpath d='M30 220 Q110 150 190 210 Q270 270 210 330' fill='none' stroke='%23008cd0' stroke-width='1' opacity='0.06'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23guilloche)'/%3E%3C/svg%3E");
+      background-size: 260px 260px;
+      mix-blend-mode: multiply;
+      opacity: 0.45;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .document-guilloche-bg > * {
+      position: relative;
+      z-index: 10;
+    }
+
+    .background-watermark {
+      z-index: 5 !important;
+    }
     
     @media print {
       * {
@@ -672,7 +723,7 @@ export default function App() {
   </style>
 </head>
 <body ${format === 'html' && exportMode === 'editable' ? 'contenteditable="true"' : ''} style="background-color: ${format === 'html' ? '#f1f5f9' : '#ffffff'}; padding: 40px 10px; display: flex; justify-content: center; min-height: 100vh;">
-  <div class="w-full max-w-[800px] bg-white text-slate-900 duration-300 relative overflow-hidden" style="padding: 30px; box-shadow: ${format === 'html' ? '0 25px 50px -12px rgb(0 0 0 / 0.15)' : 'none'}; border: 1px solid #e2e8f0; border-radius: 4px;">
+  <div class="document-guilloche-bg w-full max-w-[800px] bg-white text-slate-900 duration-300 relative overflow-hidden" style="padding: 30px; box-shadow: ${format === 'html' ? '0 25px 50px -12px rgb(0 0 0 / 0.15)' : 'none'}; border: 1px solid #e2e8f0; border-radius: 4px;">
     ${sheetContent}
   </div>
 </body>
@@ -1489,6 +1540,38 @@ export default function App() {
                 </div>
 
                 <!-- Overlapping Circular Red Stamp -->
+                ${styling.showStamp ? `
+                  <div style="position: absolute; right: -28px; bottom: -32px; transform: rotate(${styling.stampRotation || -15}deg) scale(0.85); opacity: 0.95; z-index: 100; pointer-events: none;">
+                    <svg width="125" height="125" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="75" cy="75" r="71" fill="none" stroke="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" stroke-width="1.5" stroke-dasharray="3,3" />
+                      <circle cx="75" cy="75" r="67" fill="none" stroke="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" stroke-width="2.5" />
+                      <circle cx="75" cy="75" r="46" fill="none" stroke="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" stroke-width="1.2" />
+                      <path id="stamp-text-upper-exp" d="M 18,75 A 57,57 0 1,1 132,75" fill="none" />
+                      <text font-family="monospace" font-size="8.2" font-weight="bold" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" letter-spacing="1.2">
+                        <textPath href="#stamp-text-upper-exp" startOffset="50%" text-anchor="middle">
+                          * ÉTUDE NOTARIALE DE ME ${notary.name.toUpperCase()} *
+                        </textPath>
+                      </text>
+                      <path id="stamp-text-lower-exp" d="M 132,75 A 57,57 0 1,1 18,75" fill="none" />
+                      <text font-family="monospace" font-size="8" font-weight="bold" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" letter-spacing="1.5">
+                        <textPath href="#stamp-text-lower-exp" startOffset="50%" text-anchor="middle">
+                          ${loan.city.toUpperCase()} (${loan.country.toUpperCase()}) * SERVICES NOTARIAUX
+                        </textPath>
+                      </text>
+                      <g stroke="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" stroke-width="1">
+                        <path d="M60,95 L90,95 M67,93 L83,93 M75,93 L75,55 M70,55 L80,55" stroke-width="1.5" />
+                        <path d="M53,59 Q75,54 97,59" stroke-width="2" fill="none" />
+                        <path d="M53,59 L48,75 M53,59 L58,75" />
+                        <path d="M48,75 Q53,78 58,75" fill="none" />
+                        <path d="M97,59 L92,75 M97,59 L102,75" />
+                        <path d="M92,75 Q97,78 102,75" fill="none" />
+                        <circle cx="75" cy="50" r="2.5" />
+                      </g>
+                      <text x="75" y="67" font-family="serif" font-size="6.5" font-weight="bold" text-anchor="middle" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}">${activeLang === 'FR' ? "HOMOLOGUÉ" : activeLang === 'IT' ? "OMOLOGATO" : "COMMISSIONED"}</text>
+                      <text x="75" y="82" font-family="serif" font-size="6.5" font-weight="bold" text-anchor="middle" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}">${activeLang === 'FR' ? "SCEAU CIVIL" : activeLang === 'IT' ? "SIGILLO CIVILE" : "STATE SEAL"}</text>
+                    </svg>
+                  </div>
+                ` : ''}
                 <div style="position: absolute; right: -5px; top: -5px; z-index: 20; transform: rotate(8deg); opacity: 0.85;">
                   <svg width="84" height="84" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="color: #111827; font-family: monospace; font-weight: bold;">
                     <circle cx="50" cy="50" r="47" fill="none" stroke="#b91c1c" stroke-width="2" />
@@ -1539,167 +1622,73 @@ export default function App() {
           </tr>
         </table>
 
-        <!-- Superimposed Official Stamp (optional) -->
-        ${styling.showStamp ? `
-          <div style="position: absolute; right: 40px; bottom: 120px; transform: rotate(${styling.stampRotation || -15}deg) scale(0.9); opacity: 0.95; z-index: 100;">
-            <svg width="125" height="125" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="75" cy="75" r="71" fill="none" stroke="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" stroke-width="1.5" stroke-dasharray="3,3" />
-              <circle cx="75" cy="75" r="67" fill="none" stroke="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" stroke-width="2.5" />
-              <circle cx="75" cy="75" r="46" fill="none" stroke="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" stroke-width="1.2" />
-              <path id="stamp-text-upper-exp" d="M 18,75 A 57,57 0 1,1 132,75" fill="none" />
-              <text font-family="monospace" font-size="8.2" font-weight="bold" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" letter-spacing="1.2">
-                <textPath href="#stamp-text-upper-exp" startOffset="50%" text-anchor="middle">
-                  * ÉTUDE NOTARIALE DE ME ${notary.name.toUpperCase()} *
-                </textPath>
-              </text>
-              <path id="stamp-text-lower-exp" d="M 132,75 A 57,57 0 1,1 18,75" fill="none" />
-              <text font-family="monospace" font-size="8" font-weight="bold" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" letter-spacing="1.5">
-                <textPath href="#stamp-text-lower-exp" startOffset="50%" text-anchor="middle">
-                  ${loan.city.toUpperCase()} (${loan.country.toUpperCase()}) * SERVICES NOTARIAUX
-                </textPath>
-              </text>
-              <g stroke="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}" stroke-width="1">
-                <path d="M60,95 L90,95 M67,93 L83,93 M75,93 L75,55 M70,55 L80,55" stroke-width="1.5" />
-                <path d="M53,59 Q75,54 97,59" stroke-width="2" fill="none" />
-                <path d="M53,59 L48,75 M53,59 L58,75" />
-                <path d="M48,75 Q53,78 58,75" fill="none" />
-                <path d="M97,59 L92,75 M97,59 L102,75" />
-                <path d="M92,75 Q97,78 102,75" fill="none" />
-                <circle cx="75" cy="50" r="2.5" />
-              </g>
-              <text x="75" y="67" font-family="serif" font-size="6.5" font-weight="bold" text-anchor="middle" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}">${activeLang === 'FR' ? "HOMOLOGUÉ" : activeLang === 'IT' ? "OMOLOGATO" : "COMMISSIONED"}</text>
-              <text x="75" y="82" font-family="serif" font-size="6.5" font-weight="bold" text-anchor="middle" fill="${styling.stampColor === 'text-blue-700' ? '#1d4ed8' : styling.stampColor === 'text-red-700' ? '#b91c1c' : styling.stampColor === 'text-emerald-700' ? '#047857' : '#1e293b'}">${activeLang === 'FR' ? "SCEAU CIVIL" : activeLang === 'IT' ? "SIGILLO CIVILE" : "STATE SEAL"}</text>
-            </svg>
-          </div>
-        ` : ''}
+        <!-- Page-level master stamp deactivated here (moved internally under the Notary column for optimal page locking) -->
       </body>
       </html>
     `;
-
-    if (format === 'html') {
-      let htmlWithEditor = '';
-      
-      if (exportMode === 'editable') {
-        // Add custom helper stylesheet for HTML version in EDITABLE mode, without any banner at the top of the body
-        htmlWithEditor = fileHtml.replace(
-          '</head>',
-          `  <style>
-               @media print {
-                 * {
-                   -webkit-print-color-adjust: exact !important;
-                   print-color-adjust: exact !important;
-                 }
-                 body {
-                   -webkit-print-color-adjust: exact !important;
-                   print-color-adjust: exact !important;
-                 }
-                 .print-hidden { display: none !important; }
-               }
-               .background-watermark {
-                 background-image: url('...');
-                 background-repeat: no-repeat;
-                 background-position: center;
-                 background-size: contain;
-               }
-               [contenteditable="true"]:focus { outline: 2px dashed #f59e0b; background-color: rgba(245, 158, 11, 0.05); }
-             </style>
-           </head>`
-        ).replace(
-          '<body>',
-          `<body contenteditable="true" style="padding: 20px 40px; font-family: 'Times New Roman', Times, serif; background-color: #f8fafc; min-height: 100vh;">`
-        );
-      } else {
-        // Add static locked style for OFFICIAL/NON-MODIFIABLE mode, without any banner at the top of the body
-        htmlWithEditor = fileHtml.replace(
-          '</head>',
-          `  <style>
-               @media print {
-                 * {
-                   -webkit-print-color-adjust: exact !important;
-                   print-color-adjust: exact !important;
-                 }
-                 body {
-                   -webkit-print-color-adjust: exact !important;
-                   print-color-adjust: exact !important;
-                 }
-                 .print-hidden { display: none !important; }
-               }
-               .background-watermark {
-                 background-image: url('...');
-                 background-repeat: no-repeat;
-                 background-position: center;
-                 background-size: contain;
-               }
-             </style>
-           </head>`
-        ).replace(
-          '<body>',
-          `<body style="padding: 20px 40px; font-family: 'Times New Roman', Times, serif; background-color: #f8fafc; min-height: 100vh;">`
-        );
-      }
-
-      const blob = new Blob(['\ufeff', htmlWithEditor], {
-        type: 'text/html;charset=utf-8'
-      });
-      
-      const url = URL.createObjectURL(blob);
-      const tmpAnchor = document.createElement('a');
-      tmpAnchor.href = url;
-
-      const filePrefix = exportMode === 'editable'
-        ? (styling.language === 'FR' ? 'contrat_pret_modifiable_android_' : styling.language === 'IT' ? 'contratto_prestito_modificabile_' : styling.language === 'EN' ? 'editable_loan_agreement_' : `contrat_pret_modifiable_${(styling.customLanguageLabel || styling.language).toLowerCase()}_`)
-        : (styling.language === 'FR' ? 'contrat_pret_officiel_fige_android_' : styling.language === 'IT' ? 'contratto_prestito_fissato_' : styling.language === 'EN' ? 'official_non_editable_loan_agreement_' : `contrat_officiel_fige_${(styling.customLanguageLabel || styling.language).toLowerCase()}_`);
-      
-      tmpAnchor.download = `${filePrefix}${lender.name.replace(/\s+/g, '_')}_${borrower.name.replace(/\s+/g, '_')}.html`;
-      
-      document.body.appendChild(tmpAnchor);
-      tmpAnchor.click();
-      document.body.removeChild(tmpAnchor);
-      
-      const feedbackMsg = exportMode === 'editable'
-        ? (styling.language === 'FR' ? "Format HTML Éditable (.html) généré ! Ouvrez-le directement sur votre Android ou PC pour modifier librement et imprimer en PDF propre."
-           : styling.language === 'IT' ? "Documento HTML modificabile (.html) generato! Aprilo direttamente su Android o PC per modificare e stampare comme PDF sano."
-           : `Format HTML Éditable (${styling.customLanguageLabel || styling.language}) généré avec succès !`)
-        : (styling.language === 'FR' ? "Format HTML Officiel Figé (.html) généré sous forme sécurisée non modifiable !"
-           : styling.language === 'IT' ? "Documento HTML ufficiale fissato (.html) scaricato con successo!"
-           : `Document d'Acte Officiel Figé (${styling.customLanguageLabel || styling.language}) généré avec succès !`);
-         
-      setBannerAlert(feedbackMsg);
-    } else {
-      // Package as Word Document (.doc) - with a custom filename according to selected language
-      const blob = new Blob(['\ufeff', fileHtml], {
-        type: 'application/msword;charset=utf-8'
-      });
-      
-      const url = URL.createObjectURL(blob);
-      const tmpAnchor = document.createElement('a');
-      tmpAnchor.href = url;
-
-      const filePrefix = exportMode === 'editable'
-        ? (styling.language === 'FR' ? 'contrat_pret_notarie_modifiable_' : styling.language === 'IT' ? 'contratto_prestito_notarile_modificabile_' : styling.language === 'EN' ? 'editable_notarial_loan_agreement_' : `contrat_notarie_modifiable_${(styling.customLanguageLabel || styling.language).toLowerCase()}_`)
-        : (styling.language === 'FR' ? 'contrat_pret_notarie_officiel_fige_' : styling.language === 'IT' ? 'contratto_prestito_notarile_originale_' : styling.language === 'EN' ? 'original_secured_loan_agreement_' : `contrat_notarie_officiel_${(styling.customLanguageLabel || styling.language).toLowerCase()}_`);
-      
-      tmpAnchor.download = `${filePrefix}${lender.name.replace(/\s+/g, '_')}_${borrower.name.replace(/\s+/g, '_')}.doc`;
-      
-      document.body.appendChild(tmpAnchor);
-      tmpAnchor.click();
-      document.body.removeChild(tmpAnchor);
-      
-      const feedbackMsg = exportMode === 'editable'
-        ? (styling.language === 'FR' ? "Version Word (.doc) Modifiable générée ! Idéal pour Microsoft Word sur ordinateur PC."
-           : styling.language === 'IT' ? "Versione Word (.doc) modificabile scaricata con successo! Consigliata per Microsoft Word su PC."
-           : `Version Word (.doc) Modifiable en ${styling.customLanguageLabel || styling.language} générée avec succès !`)
-        : (styling.language === 'FR' ? "Version Word (.doc) Officielle Figée générée ! Protégée contre les déréglages involontaires."
-           : styling.language === 'IT' ? "Versione Word (.doc) ufficiale fissa scaricata! Consigliata per Microsoft Word su PC."
-           : `Version Word (.doc) Officielle en ${styling.customLanguageLabel || styling.language} générée avec succès !`);
-         
-      setBannerAlert(feedbackMsg);
-    }
   };
 
   return (
     <div id="notary-app-root" className={`min-h-screen bg-[#0f172a] text-slate-100 flex flex-col print:bg-white print:h-auto print:overflow-visible ${isGenerated ? 'h-auto overflow-y-auto' : 'h-screen overflow-hidden'}`}>
       
+      {/* DOWNLOAD PROGRESS & VERIFICATION STATUS MODAL OVERLAY */}
+      {downloadState.status !== 'idle' && (
+        <div id="download-progress-overlay" className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div id="download-progress-card" className="bg-[#1e293b] border border-slate-700 rounded-xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center text-slate-100 animate-fade-in">
+            {downloadState.status === 'preparing' ? (
+              <div className="space-y-4">
+                <div className="flex justify-center py-2">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
+                </div>
+                <h3 className="font-serif text-lg font-bold text-white">Génération du document en cours...</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Calcul de la mise en page administrative, formatage de sécurité et packaging du fichier en cours d'encapsulation. Veuillez patienter un instant.
+                </p>
+                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-amber-500 animate-pulse" style={{ width: '70%' }}></div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex justify-center py-2">
+                  <div className="h-14 w-14 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                    <CheckCircle2 className="h-8 w-8" />
+                  </div>
+                </div>
+                <h3 className="font-serif text-lg font-bold text-white">Votre document est prêt !</h3>
+                <p className="text-[11px] text-slate-300 font-mono bg-slate-950 p-2.5 rounded-lg border border-slate-800 truncate">
+                  {downloadState.fileName}
+                </p>
+                <p className="text-xs text-slate-400 leading-relaxed text-left">
+                  Le téléchargement a dû s'initier automatiquement. Si la sécurité de votre appareil l'a bloqué, cliquez sur le bouton vert ci-dessous pour forcer le téléchargement directement de notre serveur.
+                </p>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (downloadState.onDownloadTrigger) {
+                        downloadState.onDownloadTrigger();
+                      }
+                    }}
+                    className="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 cursor-pointer"
+                  >
+                    <Download className="h-4 w-4" />
+                    Télécharger le document
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDownloadState({ status: 'idle', fileName: '', format: 'html' })}
+                    className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-slate-700 cursor-pointer"
+                  >
+                    Fermer
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* GLOBAL CSS CUSTOM OVERRIDES AND ANIMATIONS */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
@@ -1738,11 +1727,50 @@ export default function App() {
           }
         }
 
+        /* === PRESTIGIOUS HIGH DENSITY ADMINISTRATIVE GUILLOCHÉ / BALANCE === */
+        #printed-contract-sheet, .document-guilloche-bg {
+          position: relative !important;
+          background-color: #f0f4f8 !important;
+        }
+
+        #printed-contract-sheet::before, .document-guilloche-bg::before {
+          content: '' !important;
+          position: absolute !important;
+          inset: 0 !important;
+          background-image: 
+            linear-gradient(90deg, rgba(0, 70, 140, 0.04) 1px, transparent 1px),
+            linear-gradient(rgba(0, 80, 150, 0.035) 1px, transparent 1px) !important;
+          background-size: 70px 55px, 55px 70px !important;
+          opacity: 0.65 !important;
+          z-index: 1 !important;
+          pointer-events: none !important;
+        }
+
+        /* Guillochis courbes principal - Version plus claire et légère */
+        #printed-contract-sheet::after, .document-guilloche-bg::after {
+          content: '' !important;
+          position: absolute !important;
+          inset: 0 !important;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Cdefs%3E%3Cpattern id='guilloche' patternUnits='userSpaceOnUse' width='300' height='300'%3E%3Cpath d='M50 100 Q120 30 200 110 Q280 190 220 260 Q150 320 70 240 Q30 170 80 120' fill='none' stroke='%23004a80' stroke-width='1.8' opacity='0.09'/%3E%3Cpath d='M80 180 Q160 110 250 160 Q340 220 260 290 Q180 340 100 260' fill='none' stroke='%23006ab0' stroke-width='1.3' opacity='0.07'/%3E%3Cpath d='M30 220 Q110 150 190 210 Q270 270 210 330' fill='none' stroke='%23008cd0' stroke-width='1' opacity='0.06'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23guilloche)'/%3E%3C/svg%3E") !important;
+          background-size: 260px 260px !important;
+          mix-blend-mode: multiply !important;
+          opacity: 0.45 !important;
+          z-index: 2 !important;
+          pointer-events: none !important;
+        }
+
+        /* Frame container for relative stacking */
+        #printed-contract-sheet > *, .document-guilloche-bg > * {
+          position: relative;
+          z-index: 10;
+        }
+
         .background-watermark {
           background-image: url('...');
           background-repeat: no-repeat;
           background-position: center;
           background-size: contain;
+          z-index: 5 !important;
         }
         
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght=500;700&family=La+Belle+Aurore&family=Reenie+Beanie&family=Nothing+You+Could+Do&display=swap');

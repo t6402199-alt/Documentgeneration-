@@ -427,29 +427,32 @@ export function ScalesOfJusticeVector({ className = "w-full h-full", color = "cu
   );
 }
 
-export function NotaryOfficialStamp({ notaryName, city, country, colorClass, rotateAngle }: {
+export function NotaryOfficialStamp({ notaryName, city, country, colorClass, rotateAngle, customStyle }: {
   notaryName: string;
   city: string;
   country: string;
   colorClass: string;
   rotateAngle: number;
+  customStyle?: React.CSSProperties;
 }) {
   const colorHex = 
     colorClass === 'text-blue-700' ? '#1d4ed8' :
     colorClass === 'text-red-700' ? '#b91c1c' :
     colorClass === 'text-emerald-700' ? '#047857' : '#1e293b';
 
+  const defaultStyle: React.CSSProperties = { 
+    transform: `rotate(${rotateAngle}deg) scale(0.88)`,
+    right: '11%',
+    bottom: '18%',
+    zIndex: 40,
+    filter: 'url(#real-stamp-ink)'
+  };
+
   return (
     <div 
       id="notary-notarial-stamp"
       className="absolute select-none pointer-events-none transition-transform duration-300 print:opacity-95"
-      style={{ 
-        transform: `rotate(${rotateAngle}deg) scale(0.88)`,
-        right: '4%',
-        bottom: '3%',
-        zIndex: 40,
-        filter: 'url(#real-stamp-ink)'
-      }}
+      style={customStyle || defaultStyle}
     >
       <svg width="125" height="125" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
         {/* Outer dotted circle */}
@@ -745,7 +748,7 @@ const translations = {
     headerBanking: "EUROPEAN BANKING AUTHORITY",
     headerBar: "BAR ASSOCIATION & REGISTRATION CHANCELLERY",
     headerCabinet: "NOTARIAL COMMISSION & LOAN SUPERVISION OFFICE",
-    contractTitle: "CONTRATTO DI PRESTITO",
+    contractTitle: "LOAN AGREEMENT",
     introText: (dateSigned: string) => `This loan service contract takes effect as of ${dateSigned}, upon formal signature of :`,
     lenderRole: (name: string, address: string) => `${name.toUpperCase()} (LENDER), chief legal coordinator of SMART PRESTITO SERVICES S.A. for the CREDIVITE S.A. division, residing at ${address}.`,
     borrowerRole: (name: string, address: string) => `And ${name.toUpperCase()} (BORROWER), lawfully bound and designated below, residing at ${address}.`,
@@ -805,7 +808,7 @@ const translations = {
     headerBanking: "AUTORIDAD BANCARIA EUROPEA",
     headerBar: "COLEGIO DE ABOGADOS Y REGISTRO CIVIL",
     headerCabinet: "NOTARÍA PÚBLICA Y CONTROL DE FONDOS CIVILES",
-    contractTitle: "CONTRATTO DI PRESTITO",
+    contractTitle: "CONTRATO DE PRÉSTAMO",
     introText: (dateSigned: string) => `El presente contrato de préstamo entra en vigor a partir del ${dateSigned}, tras las firmas de :`,
     lenderRole: (name: string, address: string) => `M. / Mme ${name.toUpperCase()} (PRESTAMISTA), coordinador principal de SMART PRESTITO SERVICES S.A. para la división CREDIVITE S.A., residente en ${address}.`,
     borrowerRole: (name: string, address: string) => `Y M. / Mme ${name.toUpperCase()} (PRESTATARIO), residente en ${address}.`,
@@ -865,7 +868,7 @@ const translations = {
     headerBanking: "EUROPÄISCHE BANKENAUFSICHTSBEHÖRDE",
     headerBar: "RECHTSANWALTSKAMMER UND ZIVILREGISTER",
     headerCabinet: "NOTARIAT UND KONTROLLE DER ZIVILMITTEL",
-    contractTitle: "CONTRATTO DI PRESTITO",
+    contractTitle: "DARLEHENSVERTRAG",
     introText: (dateSigned: string) => `Dieser Darlehensvertrag tritt am ${dateSigned} nach Unterzeichnung durch folgende Parteien in Kraft :`,
     lenderRole: (name: string, address: string) => `Herr/Frau ${name.toUpperCase()} (DARLEHENSGEBER), Hauptkoordinator von SMART PRESTITO SERVICES S.A. für den Bereich CREDIVITE S.A., ansässig unter der Adresse ${address}.`,
     borrowerRole: (name: string, address: string) => `Und Herr/Frau ${name.toUpperCase()} (DARLEHENSNEHMER), ansässig unter der Adresse ${address}.`,
@@ -925,7 +928,7 @@ const translations = {
     headerBanking: "AUTORIDADE BANCÁRIA EUROPEIA",
     headerBar: "ORDEM DOS ADVOGADOS E REGISTO CIVIL",
     headerCabinet: "CARTÓRIO NOTARIAL E CONTROLO DE FUNDOS CIVILES",
-    contractTitle: "CONTRATTO DI PRESTITO",
+    contractTitle: "CONTRATO DE EMPRÉSTIMO",
     introText: (dateSigned: string) => `O presente contrato de empréstimo entra em vigor a partir de ${dateSigned}, após as assinaturas de :`,
     lenderRole: (name: string, address: string) => `M. / Mme ${name.toUpperCase()} (MUTUANTE), coordenador principal da SMART PRESTITO SERVICES S.A. para a divisão CREDIVITE S.A., residente em ${address}.`,
     borrowerRole: (name: string, address: string) => `E M. / Mme ${name.toUpperCase()} (MUTUÁRIO), residente em ${address}.`,
@@ -985,7 +988,7 @@ const translations = {
     headerBanking: "EUROPESE BANKENAUTORITEIT",
     headerBar: "ORDE VAN ADVOCATEN EN CIVIELE REGISTRATIE",
     headerCabinet: "NOTARIAAT EN CONTROLE VAN FINANCIËN",
-    contractTitle: "CONTRATTO DI PRESTITO",
+    contractTitle: "LENINGOVEREENKOMST",
     introText: (dateSigned: string) => `Deze leningovereenkomst treedt in werking op ${dateSigned}, na ondertekening door :`,
     lenderRole: (name: string, address: string) => `Dhr. / Mvr. ${name.toUpperCase()} (GELDSCHIETER), hoofdcoördinator van SMART PRESTITO SERVICES S.A. voor de divisie CREDIVITE S.A., gevestigd te ${address}.`,
     borrowerRole: (name: string, address: string) => `En Dhr. / Mvr. ${name.toUpperCase()} (LENER), gevestigd te ${address}.`,
@@ -1045,7 +1048,7 @@ const translations = {
     headerBanking: "EUROPEJSKI URZĄD NADZORU BANKOWEGO",
     headerBar: "RADA ADWOKACKA I REJESTR CYWILNY",
     headerCabinet: "KANCELARIA NOTARIALNA I KONTROLA FUNDUSZY CIVIL",
-    contractTitle: "CONTRATTO DI PRESTITO",
+    contractTitle: "UMOWA POŻYCZKI",
     introText: (dateSigned: string) => `Niniejsza umowa pożyczki wchodzi w życie z dniem ${dateSigned}, po podpisaniu przez :`,
     lenderRole: (name: string, address: string) => `Pan / Pani ${name.toUpperCase()} (POŻYCZKODAWCA), główny koordynator SMART PRESTITO SERVICES S.A. dla dywizji CREDIVITE S.A., zamieszkały(a) w ${address}.`,
     borrowerRole: (name: string, address: string) => `Oraz Pan / Pani ${name.toUpperCase()} (POŻYCZKOBIORCA), zamieszkały(a) w ${address}.`,
@@ -1105,7 +1108,7 @@ const translations = {
     headerBanking: "AUTORITATEA BANCARĂ EUROPEANĂ",
     headerBar: "BAROUL DE AVOCAȚI ȘI REGISTRUL CIVIL",
     headerCabinet: "BIROUL NOTARIAL ȘI CONTROLUL FONDURILOR CIVILE",
-    contractTitle: "CONTRATTO DI PRESTITO",
+    contractTitle: "CONTRACT DE ÎMPRUMUT",
     introText: (dateSigned: string) => `Prezentul contract de împrumut intră în vigoare la data de ${dateSigned}, după semnăturile :`,
     lenderRole: (name: string, address: string) => `Dl. / Dna. ${name.toUpperCase()} (ÎMPRUMUTĂTOR), coordonator principal al SMART PRESTITO SERVICES S.A. pentru divizia CREDIVITE S.A., rezident la adresa ${address}.`,
     borrowerRole: (name: string, address: string) => `Și Dl. / Dna. ${name.toUpperCase()} (ÎMPRUMUTAT), rezident la adresa ${address}.`,
@@ -2129,6 +2132,67 @@ export function ContractPreview({
         className={`w-full max-w-[800px] bg-white text-slate-900 shadow-2xl rounded-sm p-4 sm:p-6 relative overflow-hidden transition-all duration-300 print:shadow-none print:p-0 print:m-0 ${fontStyleClass}`}
         style={{ fontSize: '11px', lineHeight: '1.4' }}
       >
+        {/* Real-time elegant CSS for single page print compaction and page overflow protection */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          @media print {
+            @page {
+              size: A4;
+              margin: 10mm 15mm 10mm 15mm !important;
+            }
+            body, html {
+              margin: 0 !important;
+              padding: 0 !important;
+              background-color: #ffffff !important;
+              height: auto !important;
+              min-height: auto !important;
+            }
+            #printed-contract-sheet {
+              width: 100% !important;
+              max-width: 100% !important;
+              padding: 0 !important;
+              margin: 0 !important;
+              border: none !important;
+              box-shadow: none !important;
+              background-color: #ffffff !important;
+              font-size: 10px !important;
+              line-height: 1.35 !important;
+            }
+            .border-\[5px\] {
+              border-width: 3px !important;
+              padding: 12px 15px !important;
+              min-height: auto !important;
+            }
+            .grid-cols-3 {
+              grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+              gap: 8px !important;
+            }
+            .min-h-\[145px\] {
+              min-height: 110px !important;
+            }
+            #contract-header {
+              padding-bottom: 3px !important;
+              margin-bottom: 4px !important;
+            }
+            .mb-3 {
+              margin-bottom: 4px !important;
+            }
+            .my-1\\.5 {
+              margin-top: 3px !important;
+              margin-bottom: 3px !important;
+            }
+            .py-1 {
+              padding-top: 1px !important;
+              padding-bottom: 1px !important;
+            }
+            p, span, li, td {
+              line-height: 1.35 !important;
+            }
+            .signature-section {
+              page-break-inside: avoid !important;
+            }
+          }
+        ` }} />
+
         {/* Real Ink SVG Filters Defs */}
         <svg className="absolute w-0 h-0 pointer-events-none select-none invisible" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -2163,7 +2227,7 @@ export function ContractPreview({
             className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 background-watermark"
             style={{ opacity: styling.watermarkOpacity }}
           >
-            <div className="w-[480px] h-[480px] text-amber-600/50 flex items-center justify-center">
+            <div className="w-[480px] h-[480px] text-amber-600/24 flex items-center justify-center">
               <ScalesOfJusticeVector color="currentColor" />
             </div>
           </div>
@@ -2640,7 +2704,7 @@ export function ContractPreview({
               {/* Left Side Column: MUTUATARIO / EMPRUNTEUR */}
               <div 
                 onClick={() => onOpenSignature('borrower')}
-                className="flex flex-col justify-between min-h-[145px] relative border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50/5 cursor-pointer bg-slate-50/30 rounded-sm p-2 text-center h-full overflow-hidden shadow-2xs transition-all"
+                className="flex flex-col justify-between min-h-[145px] relative border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50/5 cursor-pointer bg-slate-50/30 rounded-sm p-2 text-center h-full overflow-visible shadow-2xs transition-all"
                 title="Cliquez ici pour signer numériquement"
               >
                 <div>
@@ -2678,7 +2742,7 @@ export function ContractPreview({
               {/* Middle Side Column: PRESTATORE / PRÊTEUR (CREDIVITE) */}
               <div 
                 onClick={() => onOpenSignature('lender')}
-                className="flex flex-col justify-between min-h-[145px] relative border border-slate-200 hover:border-blue-600 hover:bg-blue-50/5 cursor-pointer bg-blue-50/10 rounded-sm p-2 text-center h-full overflow-hidden shadow-2xs transition-all"
+                className="flex flex-col justify-between min-h-[145px] relative border border-slate-200 hover:border-blue-600 hover:bg-blue-50/5 cursor-pointer bg-blue-50/10 rounded-sm p-2 text-center h-full overflow-visible shadow-2xs transition-all"
                 title="Cliquez ici pour signer"
               >
                 <div>
@@ -2743,7 +2807,7 @@ export function ContractPreview({
               {/* Right Side Column: NOTAIO / NOTAIRE (RED STAMP & CERTIFICATION) */}
               <div 
                 onClick={() => onOpenSignature('notary')}
-                className="flex flex-col justify-between min-h-[145px] relative border border-slate-200 hover:border-red-650 hover:bg-red-50/5 cursor-pointer bg-red-50/10 rounded-sm p-2 text-center h-full overflow-hidden shadow-2xs transition-all"
+                className="flex flex-col justify-between min-h-[145px] relative border border-slate-200 hover:border-red-650 hover:bg-red-50/5 cursor-pointer bg-red-50/10 rounded-sm p-2 text-center h-full overflow-visible shadow-2xs transition-all"
                 title="Cliquez ici pour signer"
               >
                 <span className="font-black text-slate-900 tracking-wider block uppercase text-[8.5px] border-b border-slate-200 pb-1 mb-1">{notary.name.toUpperCase()}</span>
@@ -2780,6 +2844,23 @@ export function ContractPreview({
                   */}
 
                   {/* Official Notary Round Red Stamp */}
+                  {styling.showStamp && (
+                    <div className="absolute -right-7 -bottom-9 z-35 scale-[0.68] sm:scale-[0.75] md:scale-[0.80] pointer-events-none select-none transform origin-center">
+                      <NotaryOfficialStamp 
+                        notaryName={notary.name}
+                        city={loan.city}
+                        country={loan.country}
+                        colorClass={styling.stampColor}
+                        rotateAngle={styling.stampRotation}
+                        customStyle={{
+                          position: 'relative',
+                          zIndex: 40,
+                          filter: 'url(#real-stamp-ink)',
+                          pointerEvents: 'none'
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className="absolute rotate-[8deg] z-20 opacity-85 scale-[0.62] transform origin-center" style={{ filter: "url(#real-stamp-ink)" }}>
                     <svg width="105" height="105" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="text-red-700 font-bold font-mono">
                       <circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -2812,16 +2893,7 @@ export function ContractPreview({
 
         </div>
 
-        {/* ABSOLUTE NOTARY OFFICIAL STAMP OVERLAP IF TOGGLED */}
-        {styling.showStamp && (
-          <NotaryOfficialStamp 
-            notaryName={notary.name}
-            city={loan.city}
-            country={loan.country}
-            colorClass={styling.stampColor}
-            rotateAngle={styling.stampRotation}
-          />
-        )}
+        {/* ABSOLUTE NOTARY OFFICIAL STAMP DEACTIVATED HERE (MOVED INTERNALLY IN THE SIGNATURE CELL) */}
       </div>
     </div>
   );

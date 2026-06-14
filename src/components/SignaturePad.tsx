@@ -42,6 +42,123 @@ export function SignaturePad({ isOpen, onClose, onSave, title }: SignaturePadPro
 
   if (!isOpen) return null;
 
+  const selectPreset = (presetIndex: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Clear canvas first
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Set drawing settings for premium look
+    ctx.strokeStyle = '#0f3299'; // High def signature blue ink
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    const w = canvas.width;
+    const h = canvas.height;
+    
+    if (presetIndex === 1) {
+      // Draw Volute Impériale
+      ctx.beginPath();
+      ctx.lineWidth = 1.1;
+      const R = 42, r = 13, d = 19;
+      const cx = w / 2 - 35;
+      const cy = h / 2 - 5;
+      
+      for (let theta = 0; theta < Math.PI * 10; theta += 0.02) {
+        const x = cx + (R - r) * Math.cos(theta) + d * Math.cos((R - r) * theta / r);
+        const y = cy + (R - r) * Math.sin(theta) - d * Math.sin((R - r) * theta / r) * 0.9;
+        if (theta === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Main signature swashes
+      ctx.beginPath();
+      ctx.lineWidth = 2.4;
+      ctx.moveTo(w / 2 - 120, h / 2 + 10);
+      ctx.bezierCurveTo(w / 2 - 85, h / 2 - 45, w / 2 - 105, h / 2 - 45, w / 2 - 85, h / 2 + 15);
+      ctx.bezierCurveTo(w / 2 - 65, h / 2 + 45, w / 2 - 45, h / 2 - 5, w / 2 - 15, h / 2 - 15);
+      
+      for (let x = w / 2 - 15; x < w / 2 + 80; x += 18) {
+        ctx.bezierCurveTo(x + 5, h / 2 - 20, x + 10, h / 2 - 20, x + 15, h / 2 + 5);
+      }
+      
+      ctx.moveTo(w / 2 + 70, h / 2 + 5);
+      ctx.bezierCurveTo(w / 2 + 90, h / 2 - 10, w / 2 + 100, h / 2 - 3, w / 2 + 80, h / 2 + 18);
+      ctx.quadraticCurveTo(w / 2 - 40, h / 2 + 35, w / 2 - 135, h / 2 + 22);
+      ctx.stroke();
+      
+      // Little ink dot
+      ctx.beginPath();
+      ctx.arc(w / 2 + 100, h / 2 + 12, 1.6, 0, Math.PI * 2);
+      ctx.fillStyle = '#0f3299';
+      ctx.fill();
+    } else if (presetIndex === 2) {
+      // Draw Paraphe 3D
+      ctx.beginPath();
+      ctx.lineWidth = 1.4;
+      ctx.moveTo(w / 2 - 115, h / 2 + 15);
+      for (let t = 0; t < 15; t += 0.05) {
+        const x = w / 2 - 115 + t * 13 + Math.sin(t * 2.2) * 16;
+        const y = h / 2 + Math.cos(t * 1.5) * (24 - t * 1.1) + Math.sin(t) * 4;
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.lineWidth = 0.9;
+      const cx2 = w / 2 + 55;
+      const cy2 = h / 2 - 8;
+      for (let a = 0; a < 25; a += 0.1) {
+        const radius = 2 + a * 1.05;
+        const x = cx2 + radius * Math.sin(a * 1.7);
+        const y = cy2 + radius * Math.cos(a * 1.7) * 0.75;
+        if (a === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.lineWidth = 2.2;
+      ctx.moveTo(w / 2 - 125, h / 2 + 18);
+      ctx.lineTo(w / 2 - 95, h / 2 - 32);
+      ctx.lineTo(w / 2 - 70, h / 2 + 20);
+      
+      ctx.moveTo(w / 2 - 95, h / 2 + 28);
+      ctx.quadraticCurveTo(w / 2, h / 2 + 12, w / 2 + 95, h / 2 + 22);
+      ctx.stroke();
+    } else {
+      // Draw Clé Vectorielle
+      ctx.beginPath();
+      ctx.lineWidth = 1.1;
+      const cx3 = w / 2 - 30;
+      const cy3 = h / 2 - 5;
+      for (let theta = 0; theta < Math.PI * 8; theta += 0.04) {
+        const x = cx3 + 48 * Math.cos(theta) + 16 * Math.cos(4 * theta);
+        const y = cy3 + 26 * Math.sin(theta) - 10 * Math.sin(4 * theta) * 0.9;
+        if (theta === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.lineWidth = 2.1;
+      ctx.moveTo(w / 2 - 125, h / 2 + 22);
+      ctx.quadraticCurveTo(w / 2, h / 2 + 32, w / 2 + 110, h / 2 + 12);
+      ctx.moveTo(w / 2 - 105, h / 2 + 27);
+      ctx.quadraticCurveTo(w / 2, h / 2 + 36, w / 2 + 95, h / 2 + 18);
+      
+      ctx.moveTo(w / 2 - 115, h / 2 + 3);
+      ctx.bezierCurveTo(w / 2 - 95, h / 2 - 38, w / 2 - 130, h / 2 - 38, w / 2 - 100, h / 2 + 12);
+      ctx.stroke();
+    }
+    
+    setHasDrawn(true);
+  };
+
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault();
     const canvas = canvasRef.current;
@@ -118,7 +235,7 @@ export function SignaturePad({ isOpen, onClose, onSave, title }: SignaturePadPro
             Utilisez votre souris ou votre écran tactile pour dessiner votre signature dans la zone bleue ci-dessous :
           </p>
           
-          <div className="border-2 border-dashed border-blue-200 rounded-lg overflow-hidden bg-blue-[2px] relative">
+          <div className="border-2 border-dashed border-blue-200 rounded-lg overflow-hidden bg-blue-[2px] relative mb-4">
             <canvas
               ref={canvasRef}
               onMouseDown={startDrawing}
@@ -136,8 +253,41 @@ export function SignaturePad({ isOpen, onClose, onSave, title }: SignaturePadPro
               </div>
             )}
           </div>
+
+          {/* PRESSET MASSIVE COMPLEX SIGNATURES SECURED */}
+          <div className="pt-3 border-t border-slate-100 mb-4">
+            <span className="text-xs font-semibold text-slate-700 block mb-2 text-left">
+              🛡️ Signatures de sécurité complexes (incopiables à la main) :
+            </span>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => selectPreset(1)}
+                className="py-1.5 px-2 border border-slate-200 hover:border-blue-500 hover:bg-blue-50/30 rounded-lg text-[10px] font-bold text-slate-600 text-center transition-all cursor-pointer"
+                title="Spirographe guilloché impérial et arabesque"
+              >
+                Volute Impériale
+              </button>
+              <button
+                type="button"
+                onClick={() => selectPreset(2)}
+                className="py-1.5 px-2 border border-slate-200 hover:border-blue-500 hover:bg-blue-50/30 rounded-lg text-[10px] font-bold text-slate-600 text-center transition-all cursor-pointer"
+                title="Paraphe sinusoïdal cryptographique 3D"
+              >
+                Paraphe 3D
+              </button>
+              <button
+                type="button"
+                onClick={() => selectPreset(3)}
+                className="py-1.5 px-2 border border-slate-200 hover:border-blue-500 hover:bg-blue-50/30 rounded-lg text-[10px] font-bold text-slate-600 text-center transition-all cursor-pointer"
+                title="Clé géométrique vectorielle ultra sécurisée"
+              >
+                Clé Vectorielle
+              </button>
+            </div>
+          </div>
           
-          <div className="flex gap-3 mt-4 justify-end">
+          <div className="flex gap-3 justify-end">
             <button
               id="clear-canvas-button"
               type="button"
