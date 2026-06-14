@@ -4,8 +4,9 @@
  */
 
 import React from 'react';
-import { PartyDetails, LoanDetails, StylingDetails } from '../types';
+import { PartyDetails, LoanDetails, StylingDetails, ContractType, DocumentViewType } from '../types';
 import { Award, ShieldCheck, Scale, Landmark, Calendar, Percent, AlertOctagon, Mail, Phone, Briefcase } from 'lucide-react';
+import { secondaryDocsT } from './secondaryDocTranslations';
 
 interface ContractPreviewProps {
   lender: PartyDetails;
@@ -16,6 +17,8 @@ interface ContractPreviewProps {
   onOpenSignature: (party: 'lender' | 'borrower' | 'notary') => void;
   fontFamily: string;
   exportMode?: 'editable' | 'official';
+  contractType?: ContractType;
+  selectedDoc?: DocumentViewType;
 }
 
 // Helper vectors for rendering flags cleanly
@@ -56,6 +59,317 @@ export function FlagVector({ country, className = "h-6 w-9" }: { country: string
             );
           })}
         </g>
+      </svg>
+    );
+  }
+  if (country === 'DE') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
+        <rect width="5" height="1" fill="#000000" />
+        <rect y="1" width="5" height="1" fill="#DD0000" />
+        <rect y="2" width="5" height="1" fill="#FFCC00" />
+      </svg>
+    );
+  }
+  if (country === 'ES') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="2" fill="#C11B17" />
+        <rect y="0.5" width="3" height="1" fill="#F4D03F" />
+        <circle cx="0.8" cy="1" r="0.2" fill="#C11B17" opacity="0.8" />
+      </svg>
+    );
+  }
+  if (country === 'BE') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1" height="2" fill="#000000" />
+        <rect x="1" width="1" height="2" fill="#FDDA0D" />
+        <rect x="2" width="1" height="2" fill="#C11B17" />
+      </svg>
+    );
+  }
+  if (country === 'NL') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#AE1C28" />
+        <rect y="0.67" width="3" height="0.66" fill="#FFFFFF" />
+        <rect y="1.33" width="3" height="0.67" fill="#21468B" />
+      </svg>
+    );
+  }
+  if (country === 'LU') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#EA1E25" />
+        <rect y="0.67" width="3" height="0.66" fill="#FFFFFF" />
+        <rect y="1.33" width="3" height="0.67" fill="#4B9CD3" />
+      </svg>
+    );
+  }
+  if (country === 'PT') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1.2" height="2" fill="#006600" />
+         <rect x="1.2" width="1.8" height="2" fill="#FF0000" />
+         <circle cx="1.2" cy="1" r="0.3" fill="#FFCC00" opacity="0.9" />
+       </svg>
+    );
+  }
+  if (country === 'IE') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1" height="2" fill="#169B62" />
+        <rect x="1" width="1" height="2" fill="#FFFFFF" />
+        <rect x="2" width="1" height="2" fill="#FF883E" />
+      </svg>
+    );
+  }
+  if (country === 'GR') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 9 6" xmlns="http://www.w3.org/2000/svg">
+        <rect width="9" height="6" fill="#005BA6" />
+        <rect y="0.67" width="9" height="0.67" fill="#FFFFFF" />
+        <rect y="2.0" width="9" height="0.67" fill="#FFFFFF" />
+        <rect y="3.33" width="9" height="0.67" fill="#FFFFFF" />
+        <rect y="4.67" width="9" height="0.67" fill="#FFFFFF" />
+        <rect width="3.33" height="3.33" fill="#005BA6" />
+        <rect x="1.33" width="0.67" height="3.33" fill="#FFFFFF" />
+        <rect y="1.33" width="3.33" height="0.67" fill="#FFFFFF" />
+      </svg>
+    );
+  }
+  if (country === 'AT') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#ED2939" />
+        <rect y="0.67" width="3" height="0.66" fill="#FFFFFF" />
+        <rect y="1.33" width="3" height="0.67" fill="#ED2939" />
+      </svg>
+    );
+  }
+  if (country === 'PL') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="1" fill="#FFFFFF" />
+        <rect y="1" width="3" height="1" fill="#DC143C" />
+      </svg>
+    );
+  }
+  if (country === 'RO') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1" height="2" fill="#002B7F" />
+        <rect x="1" width="1" height="2" fill="#FCD116" />
+        <rect x="2" width="1" height="2" fill="#CE1126" />
+      </svg>
+    );
+  }
+  if (country === 'SE') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 16 10" xmlns="http://www.w3.org/2000/svg">
+        <rect width="16" height="10" fill="#006AA7" />
+        <rect x="5" width="2" height="10" fill="#FECC00" />
+        <rect y="4" width="16" height="2" fill="#FECC00" />
+      </svg>
+    );
+  }
+  if (country === 'DK') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 37 28" xmlns="http://www.w3.org/2000/svg">
+        <rect width="37" height="28" fill="#C8102E" />
+        <rect x="12" width="4" height="28" fill="#FFFFFF" />
+        <rect y="12" width="37" height="4" fill="#FFFFFF" />
+      </svg>
+    );
+  }
+  if (country === 'FI') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 18 11" xmlns="http://www.w3.org/2000/svg">
+        <rect width="18" height="11" fill="#FFFFFF" />
+        <rect x="5" width="3" height="11" fill="#003580" />
+        <rect y="4" width="18" height="3" fill="#003580" />
+      </svg>
+    );
+  }
+  if (country === 'CH') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 1 1" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1" height="1" fill="#D3010C" />
+        <rect x="0.4" y="0.2" width="0.2" height="0.6" fill="#FFFFFF" />
+        <rect x="0.2" y="0.4" width="0.6" height="0.2" fill="#FFFFFF" />
+      </svg>
+    );
+  }
+  if (country === 'GB') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 50 30" xmlns="http://www.w3.org/2000/svg">
+        <rect width="50" height="30" fill="#012169" />
+        <path d="M0,0 L50,30 M50,0 L0,30" stroke="#FFFFFF" strokeWidth="6" />
+        <path d="M0,0 L50,30 M50,0 L0,30" stroke="#C8102E" strokeWidth="2" />
+        <path d="M25,0 L25,30 M0,15 L50,15" stroke="#FFFFFF" strokeWidth="10" />
+        <path d="M25,0 L25,30 M0,15 L50,15" stroke="#C8102E" strokeWidth="6" />
+      </svg>
+    );
+  }
+  if (country === 'HR') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#FF0000" />
+        <rect y="0.67" width="3" height="0.66" fill="#FFFFFF" />
+        <rect y="1.33" width="3" height="0.67" fill="#171796" />
+        <circle cx="1.5" cy="1" r="0.2" fill="#FF0000" opacity="0.8" />
+      </svg>
+    );
+  }
+  if (country === 'CZ') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="1" fill="#FFFFFF" />
+        <rect y="1" width="3" height="1" fill="#D7141A" />
+        <polygon points="0,0 1.5,1 0,2" fill="#11457E" />
+      </svg>
+    );
+  }
+  if (country === 'HU') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#CD2A3E" />
+        <rect y="0.67" width="3" height="0.66" fill="#FFFFFF" />
+        <rect y="1.33" width="3" height="0.67" fill="#436F4D" />
+      </svg>
+    );
+  }
+  if (country === 'BG') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
+        <rect width="5" height="1" fill="#FFFFFF" />
+        <rect y="1" width="5" height="1" fill="#00966E" />
+        <rect y="2" width="5" height="1" fill="#D62612" />
+      </svg>
+    );
+  }
+  if (country === 'EE') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#0072CE" />
+        <rect y="0.67" width="3" height="0.66" fill="#000000" />
+        <rect y="1.33" width="3" height="0.67" fill="#FFFFFF" />
+      </svg>
+    );
+  }
+  if (country === 'LT') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#FDB913" />
+        <rect y="0.67" width="3" height="0.66" fill="#006A44" />
+        <rect y="1.33" width="3" height="0.67" fill="#C1272D" />
+      </svg>
+    );
+  }
+  if (country === 'LV') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.8" fill="#9E3039" />
+        <rect y="0.8" width="3" height="0.4" fill="#FFFFFF" />
+        <rect y="1.2" width="3" height="0.8" fill="#9E3039" />
+      </svg>
+    );
+  }
+  if (country === 'NO') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 22 16" xmlns="http://www.w3.org/2000/svg">
+        <rect width="22" height="16" fill="#BA0C2F" />
+        <rect x="6" width="4" height="16" fill="#FFFFFF" />
+        <rect y="6" width="22" height="4" fill="#FFFFFF" />
+        <rect x="7" width="2" height="16" fill="#00205B" />
+        <rect y="7" width="22" height="2" fill="#00205B" />
+      </svg>
+    );
+  }
+  if (country === 'IS') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 25 18" xmlns="http://www.w3.org/2000/svg">
+        <rect width="25" height="18" fill="#003897" />
+        <rect x="7" width="4" height="18" fill="#FFFFFF" />
+        <rect y="7" width="25" height="4" fill="#FFFFFF" />
+        <rect x="8" width="2" height="18" fill="#D7282F" />
+        <rect y="8" width="25" height="2" fill="#D7282F" />
+      </svg>
+    );
+  }
+  if (country === 'MC') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="1" fill="#E2001A" />
+        <rect y="1" width="3" height="1" fill="#FFFFFF" />
+      </svg>
+    );
+  }
+  if (country === 'LI') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="1" fill="#00205B" />
+        <rect y="1" width="3" height="1" fill="#C8102E" />
+      </svg>
+    );
+  }
+  if (country === 'SK') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#FFFFFF" />
+        <rect y="0.67" width="3" height="0.66" fill="#0B4EA2" />
+        <rect y="1.33" width="3" height="0.67" fill="#EE1C25" />
+      </svg>
+    );
+  }
+  if (country === 'SI') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#FFFFFF" />
+        <rect y="0.67" width="3" height="0.66" fill="#002395" />
+        <rect y="1.33" width="3" height="0.67" fill="#ED2939" />
+      </svg>
+    );
+  }
+  if (country === 'UA') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="1" fill="#0057B7" />
+        <rect y="1" width="3" height="1" fill="#FFD700" />
+      </svg>
+    );
+  }
+  if (country === 'MT') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1.5" height="2" fill="#FFFFFF" />
+        <rect x="1.5" width="1.5" height="2" fill="#D11218" />
+      </svg>
+    );
+  }
+  if (country === 'CY') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="2" fill="#FFFFFF" />
+        <ellipse cx="1.5" cy="1" rx="0.5" ry="0.3" fill="#D37E2A" />
+      </svg>
+    );
+  }
+  if (country === 'AL') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="2" fill="#E41B13" />
+        <circle cx="1.5" cy="1" r="0.35" fill="#000000" opacity="0.85" />
+      </svg>
+    );
+  }
+  if (country === 'RS') {
+    return (
+      <svg className={`${className} shadow-xs border border-slate-200`} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="0.67" fill="#C11B17" />
+        <rect y="0.67" width="3" height="0.66" fill="#00205B" />
+        <rect y="1.33" width="3" height="0.67" fill="#FFFFFF" />
       </svg>
     );
   }
@@ -918,6 +1232,8 @@ export function ContractPreview({
   onOpenSignature,
   fontFamily,
   exportMode = 'official',
+  contractType = 'personal_loan',
+  selectedDoc = 'main_contract',
 }: ContractPreviewProps) {
   
   // Helper to map CUSTOM language label to basic locale keys
@@ -945,9 +1261,28 @@ export function ContractPreview({
 
   const t = (() => {
     if (languageCode === 'CUSTOM' && styling.customTranslations) {
+      const ct = styling.customTranslations;
+      const repl = (val: any, replacements: Record<string, string | number> = {}) => {
+        if (typeof val !== 'string') return val;
+        let str = val;
+        Object.entries(replacements).forEach(([k, v]) => {
+          // Escape regex special chars
+          const escapedKey = k.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+          str = str.replace(new RegExp(escapedKey, 'g'), String(v));
+        });
+        return str;
+      };
+
       return {
         ...translations.FR,
-        ...styling.customTranslations
+        ...ct,
+        introText: (dateSigned: string) => repl(ct.introText || (typeof translations.FR.introText === 'function' ? translations.FR.introText(dateSigned) : translations.FR.introText), { '[DATE_SIGNED]': dateSigned }),
+        lenderRole: (name: string, address: string) => repl(ct.lenderRole || (typeof translations.FR.lenderRole === 'function' ? translations.FR.lenderRole(name, address) : translations.FR.lenderRole), { '[NAME]': name.toUpperCase(), '[ADDRESS]': address }),
+        borrowerRole: (name: string, address: string) => repl(ct.borrowerRole || (typeof translations.FR.borrowerRole === 'function' ? translations.FR.borrowerRole(name, address) : translations.FR.borrowerRole), { '[NAME]': name.toUpperCase(), '[ADDRESS]': address }),
+        preambleClause1: (amount: string, duration: number, rate: number) => repl(ct.preambleClause1 || (typeof translations.FR.preambleClause1 === 'function' ? translations.FR.preambleClause1(amount, duration, rate) : translations.FR.preambleClause1), { '[AMOUNT]': amount, '[DURATION]': duration, '[RATE]': rate }),
+        art1Content: (total: string, duration: number) => repl(ct.art1Content || (typeof translations.FR.art1Content === 'function' ? translations.FR.art1Content(total, duration) : translations.FR.art1Content), { '[TOTAL]': total, '[DURATION]': duration }),
+        art2Content: (duration: number, installment: string, day: string) => repl(ct.art2Content || (typeof translations.FR.art2Content === 'function' ? translations.FR.art2Content(duration, installment, day) : translations.FR.art2Content), { '[DURATION]': duration, '[INSTALLMENT]': installment, '[DAY]': day }),
+        art5Content: (fee: string, amount: string) => repl(ct.art5Content || (typeof translations.FR.art5Content === 'function' ? translations.FR.art5Content(fee, amount) : translations.FR.art5Content), { '[FEE]': fee, '[AMOUNT]': amount }),
       };
     }
     const code = matchedBaseCode as keyof typeof translations;
@@ -1038,6 +1373,753 @@ export function ContractPreview({
   const finalDateFormatted = loan.finalRepaymentDate
     ? new Date(loan.finalRepaymentDate).toLocaleDateString(getLocale(matchedBaseCode), { day: 'numeric', month: 'long', year: 'numeric' })
     : getUnspecifiedDate(matchedBaseCode);
+
+  // Dynamic adaptations for B2B, mixed, and donation contracts
+  const isDonation = contractType === 'donation';
+  const isB2B = contractType === 'business_loan';
+  const isMixed = contractType === 'party_business_loan';
+
+  let customContractTitle = t.contractTitle;
+  let customIntroText = t.introText(signatureDateFormatted);
+  let customLenderRole = t.lenderRole(lender.name, lender.address || `${loan.city} (${loan.country})`);
+  let customBorrowerRole = t.borrowerRole(borrower.name, borrower.address || `${loan.city} (${loan.country})`);
+  let customPreambleTitle = t.preambleTitle;
+  let customPreambleClause1 = t.preambleClause1(formatMoney(loan.amount), loan.durationMonths, loan.interestRate);
+  let customPreambleClause2 = t.preambleClause2;
+  let customPreambleClause3 = t.preambleClause3;
+  let customPartiesAgree = t.partiesAgree;
+  let customLabelLender = t.labelLender;
+  let customLabelBorrower = t.labelBorrower;
+  let customHandwriteTextLender = t.handwriteTextLender;
+  let customHandwriteTextBorrower = t.handwriteTextBorrower;
+  let customClosingRemarks = t.closingRemarks;
+
+  if (isB2B) {
+    if (languageCode === 'CUSTOM' && styling.customTranslations) {
+      const ct = styling.customTranslations;
+      const repl = (val: any, replacements: Record<string, string | number> = {}) => {
+        if (typeof val !== 'string') return val;
+        let str = val;
+        Object.entries(replacements).forEach(([k, v]) => {
+          const escapedKey = k.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+          str = str.replace(new RegExp(escapedKey, 'g'), String(v));
+        });
+        return str;
+      };
+
+      customContractTitle = ct.b2bContractTitle || "CONTRAT DE PRÊT COMMERCIAL (B2B)";
+      customIntroText = repl(ct.b2bIntroText || "Le présent accord de trésorerie professionnelle prend effet le [DATE_SIGNED], convenu d'un commun accord entre :", { '[DATE_SIGNED]': signatureDateFormatted });
+      customLenderRole = repl(ct.b2bLenderRole || "La Société [NAME] (CRÉANCIER / PRÊTEUR PROFESSIONNEL), ayant son siège social à [ADDRESS].", { '[NAME]': lender.name.toUpperCase(), '[ADDRESS]': lender.address || `${loan.city} (${loan.country})` });
+      customBorrowerRole = repl(ct.b2bBorrowerRole || "Et la Société [NAME] (EMPRUNTEUR CORPORATIF), sise à [ADDRESS].", { '[NAME]': borrower.name.toUpperCase(), '[ADDRESS]': borrower.address || `${loan.city} (${loan.country})` });
+      customPreambleTitle = ct.b2bPreambleTitle || "EXPOSÉ DES MOTIFS (PRÉAMBULE)";
+      customPreambleClause1 = repl(ct.b2bPreambleClause1 || "Considérant que l'Emprunteur Corporatif a sollicité auprès du Prêteur un financement professionnel de [AMOUNT] d'une durée de [DURATION] mois.", { '[AMOUNT]': formatMoney(loan.amount), '[DURATION]': loan.durationMonths });
+      customPreambleClause2 = ct.b2bPreambleClause2 || "Considérant que le Prêteur consent à allouer ces fonds pour les besoins de trésorerie et d'activité de l'entité emprunteuse.";
+      customPreambleClause3 = ct.b2bPreambleClause3 || "Le présent contrat est régi sous l'empire des règles commerciales européennes relatives aux transactions entre sociétés.";
+      customPartiesAgree = ct.b2bPartiesAgree || "LES PARTIES DÉCIDENT D'ARRÊTER LES CONVENTIONS SUIVANTES :";
+      customClosingRemarks = ct.b2bClosingRemarks || "Fait en trois exemplaires originaux, dument répertoriés aux registres de trésorerie.";
+      customLabelLender = ct.b2bLabelLender || "LE PRÊTEUR (CRÉANCIER CORPORATIF)";
+      customLabelBorrower = ct.b2bLabelBorrower || "L'EMPRUNTEUR (ENTREPRISE DÉBITRICE)";
+    } else if (matchedBaseCode === 'IT') {
+      customContractTitle = "CONTRATTO DI PRESTITO COMMERCIALE (B2B)";
+      customIntroText = `Il presente accordo di credito professionale entra in vigore dal ${signatureDateFormatted}, tra le imprese firmatarie:`;
+      customLenderRole = `La Società ${lender.name.toUpperCase()} (MUTUANTE / CORPORATE), con sede legale a ${lender.address || `${loan.city} (${loan.country})`}.`;
+      customBorrowerRole = `E la Società ${borrower.name.toUpperCase()} (MUTUATARIO / IMPRESA DEBITRICE), sise a ${borrower.address || `${loan.city} (${loan.country})`}.`;
+      customPreambleTitle = "PREMESSA COMMERCIALE";
+      customPreambleClause1 = `Considerando che il Mutuatario ha sollecitato un finanziamento aziendale di ${formatMoney(loan.amount)} per una durata di ${loan.durationMonths} mesi.`;
+      customPreambleClause2 = "Considerando che il Mutuante ha acconsentito a concedere tale fido commerciale nell'ambito della propria operatività finanziaria.";
+      customPreambleClause3 = "Le parti approvano il presente regolamento in adempimento alle norme civilistiche e fiscali delle transazioni inter-societarie.";
+      customPartiesAgree = "LE PARTI CONCORDANO E STIPULANO QUANTO SEGUE :";
+      customClosingRemarks = "Fatto in tre esemplari elettronici aventi pari valore probatorio.";
+    } else if (matchedBaseCode === 'EN') {
+      customContractTitle = "B2B COMMERCIAL LOAN AGREEMENT";
+      customIntroText = `This commercial lending deed is made effective on ${signatureDateFormatted}, between the following corporate entities:`;
+      customLenderRole = `The Company ${lender.name.toUpperCase()} (CORPORATE CREDIT LENDER), situated at ${lender.address || `${loan.city} (${loan.country})`}.`;
+      customBorrowerRole = `And the Company ${borrower.name.toUpperCase()} (ORGANIZATIONAL DEBTOR), situated at ${borrower.address || `${loan.city} (${loan.country})`}.`;
+      customPreambleTitle = "COMMERCIAL PREAMBLE";
+      customPreambleClause1 = `Whereas the Debtor has requested a professional treasury loan of ${formatMoney(loan.amount)} for a duration of ${loan.durationMonths} months.`;
+      customPreambleClause2 = "Whereas the Lender is willing to provide such credit solely to support business operations or investment.";
+      customPreambleClause3 = "This agreement is framed in observance of the directives of trade law and business regulations.";
+      customPartiesAgree = "THE PARTIES STIPULATE AND AGREE AS FOLLOWS:";
+      customClosingRemarks = "Executed in triplicate matching originals, each party acknowledging receipt of one copy.";
+    } else {
+      customContractTitle = "CONTRAT DE PRÊT COMMERCIAL (B2B)";
+      customIntroText = `Le présent accord de trésorerie professionnelle prend effet le ${signatureDateFormatted}, convenu d'un commun accord entre :`;
+      customLenderRole = `La Société ${lender.name.toUpperCase()} (CRÉANCIER / PRÊTEUR PROFESSIONNEL), ayant son siège social à ${lender.address || `${loan.city} (${loan.country})`}.`;
+      customBorrowerRole = `Et la Société ${borrower.name.toUpperCase()} (EMPRUNTEUR CORPORATIF), sise à ${borrower.address || `${loan.city} (${loan.country})`}.`;
+      customPreambleTitle = "EXPOSÉ DES MOTIFS (PRÉAMBULE)";
+      customPreambleClause1 = `Considérant que l'Emprunteur Corporatif a sollicité auprès du Prêteur un financement professionnel de ${formatMoney(loan.amount)} d'une durée de ${loan.durationMonths} mois.`;
+      customPreambleClause2 = "Considérant que le Prêteur consent à allouer ces fonds pour les besoins de trésorerie et d'activité de l'entité emprunteuse.";
+      customPreambleClause3 = "Le présent contrat est régi sous l'empire des règles commerciales européennes relatives aux transactions entre sociétés.";
+      customPartiesAgree = "LES PARTIES DÉCIDENT D'ARRÊTER LES CONVENTIONS SUIVANTES :";
+      customClosingRemarks = "Fait en trois exemplaires originaux, dument répertoriés aux registres de trésorerie.";
+    }
+    if (languageCode !== 'CUSTOM' || !styling.customTranslations) {
+      customLabelLender = matchedBaseCode === 'IT' ? "IL MUTUANTE (FINANZIATORE CORP)" : matchedBaseCode === 'EN' ? "THE LENDER (CORPORATE CREDITOR)" : "LE PRÊTEUR (CRÉANCIER CORPORATIF)";
+      customLabelBorrower = matchedBaseCode === 'IT' ? "IL MUTUATARIO (IMPRESA DEBITRICE)" : matchedBaseCode === 'EN' ? "THE BORROWER (CORPORATE DEBTOR)" : "L'EMPRUNTEUR (ENTREPRISE DÉBITRICE)";
+    }
+  } else if (isMixed) {
+    if (languageCode === 'CUSTOM' && styling.customTranslations) {
+      const ct = styling.customTranslations;
+      const repl = (val: any, replacements: Record<string, string | number> = {}) => {
+        if (typeof val !== 'string') return val;
+        let str = val;
+        Object.entries(replacements).forEach(([k, v]) => {
+          const escapedKey = k.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+          str = str.replace(new RegExp(escapedKey, 'g'), String(v));
+        });
+        return str;
+      };
+
+      customContractTitle = ct.mixedContractTitle || "CONTRAT DE PRÊT MIXTE (ENTREPRISE - PARTICULIER)";
+      customIntroText = repl(ct.mixedIntroText || "Le présent acte d'arrangement civil financier prend effet en date du [DATE_SIGNED], entre :", { '[DATE_SIGNED]': signatureDateFormatted });
+      customLenderRole = repl(ct.mixedLenderRole || "La Société [NAME] (ENTREPRISE PRÊTEUSE), sise au [ADDRESS].", { '[NAME]': lender.name.toUpperCase(), '[ADDRESS]': lender.address || `${loan.city} (${loan.country})` });
+      customBorrowerRole = repl(ct.mixedBorrowerRole || "Et M. / Mme [NAME] (EMPRUNTEUR PARTICULIER), demeurant au [ADDRESS].", { '[NAME]': borrower.name.toUpperCase(), '[ADDRESS]': borrower.address || `${loan.city} (${loan.country})` });
+      customPreambleTitle = ct.mixedPreambleTitle || "PRÉAMBULE ADMINISTRATIF";
+      customPreambleClause1 = repl(ct.mixedPreambleClause1 || "Considérant que l'emprunteur particulier sollicite une mise à disposition d'une somme de [AMOUNT] d'une durée de [DURATION] mois auprès d'une entreprise prêteuse.", { '[AMOUNT]': formatMoney(loan.amount), '[DURATION]': loan.durationMonths });
+      customPreambleClause2 = ct.mixedPreambleClause2 || "Considérant que la société prêteuse décide de consentir à cette demande de financement pour accompagner le projet personnel ou d'investissement du particulier.";
+      customPreambleClause3 = ct.mixedPreambleClause3 || "Le présent acte est répertorié dument au greffe pour la traçabilité des opérations de prêt mixte.";
+      customPartiesAgree = ct.mixedPartiesAgree || "IL A ÉTÉ ARRÊTÉ ET CONVENU CE QUI SUIT :";
+      customLabelLender = ct.mixedLabelLender || "LE PRÊTEUR (SOCIÉTÉ PRÊTEUSE)";
+      customLabelBorrower = ct.mixedLabelBorrower || "L'EMPRUNTEUR (PARTICULIER EMPRUNTEUR)";
+    } else if (matchedBaseCode === 'IT') {
+      customContractTitle = "CONTRATTO DI PRESTITO MISTO (AZIENDA-PRIVATO)";
+      customIntroText = `Il presente contratto di debito ad uso misto societario-privato entra in vigore dal ${signatureDateFormatted}, tra:`;
+      customLenderRole = `L'Impresa ${lender.name.toUpperCase()} (AZIENDA MUTUANTE), con sede a ${lender.address || `${loan.city} (${loan.country})`}.`;
+      customBorrowerRole = `E M. / Mme ${borrower.name.toUpperCase()} (MUTUATARIO PRIVATO), residente a ${borrower.address || `${loan.city} (${loan.country})`}.`;
+      customPreambleTitle = "PREMESSA DEL PRESTITO MISTO";
+      customPreambleClause1 = `Considerando che si stipula il fido finanziario di ${formatMoney(loan.amount)} per una durata di ${loan.durationMonths} mesi.`;
+      customPreambleClause2 = "Considerando che l'azienda mutuante intende cedere detti capitali per supportare il progetto personale o di investimento del privato.";
+      customPreambleClause3 = "Le parti sottoscrivono il presente accordo sotto la vigilanza delle disposizioni fiscali dei prestiti civili registrati.";
+      customPartiesAgree = "SI CONCORDANO LE SEGUENTI CLAUSOLE ESECUTORIE :";
+    } else if (matchedBaseCode === 'EN') {
+      customContractTitle = "MIXED LOAN AGREEMENT (BUSINESS-PRIVATE)";
+      customIntroText = `This mixed-use loan agreement is made on ${signatureDateFormatted}, between the following distinct parties:`;
+      customLenderRole = `The Corporation ${lender.name.toUpperCase()} (CORPORATE LENDER), having its office at ${lender.address || `${loan.city} (${loan.country})`}.`;
+      customBorrowerRole = `And Mr. / Mrs. ${borrower.name.toUpperCase()} (PRIVATE PARTY BORROWER), residing at ${borrower.address || `${loan.city} (${loan.country})`}.`;
+      customPreambleTitle = "PREAMBLE";
+      customPreambleClause1 = `Whereas the private debtor has requested a capital credit line of ${formatMoney(loan.amount)} for a duration of ${loan.durationMonths} months.`;
+      customPreambleClause2 = "Whereas the corporate lender wishes to support the private initiatives or personal goals of the borrower under agreed protections.";
+      customPreambleClause3 = "The parties agree to execute this deed in compliance with private credit guidelines.";
+      customPartiesAgree = "THE PARTIES HERETO DECLARE AND AGREE AS FOLLOWS:";
+    } else {
+      customContractTitle = "CONTRAT DE PRÊT MIXTE (ENTREPRISE - PARTICULIER)";
+      customIntroText = `Le présent acte d'arrangement civil financier prend effet en date du ${signatureDateFormatted}, entre :`;
+      customLenderRole = `La Société ${lender.name.toUpperCase()} (ENTREPRISE PRÊTEUSE), sise au ${lender.address || `${loan.city} (${loan.country})`}.`;
+      customBorrowerRole = `Et M. / Mme ${borrower.name.toUpperCase()} (EMPRUNTEUR PARTICULIER), demeurant au ${borrower.address || `${loan.city} (${loan.country})`}.`;
+      customPreambleTitle = "PRÉAMBULE ADMINISTRATIF";
+      customPreambleClause1 = `Considérant que l'emprunteur particulier sollicite une mise à disposition d'une somme de ${formatMoney(loan.amount)} d'une durée de ${loan.durationMonths} mois auprès d'une entreprise prêteuse.`;
+      customPreambleClause2 = "Considérant que la société prêteuse décide de consentir à cette demande de financement pour accompagner le projet personnel ou d'investissement du particulier.";
+      customPreambleClause3 = "Le présent acte est répertorié dument au greffe pour la traçabilité des opérations de prêt mixte.";
+      customPartiesAgree = "IL A ÉTÉ ARRÊTÉ ET CONVENU CE QUI SUIT :";
+    }
+    if (languageCode !== 'CUSTOM' || !styling.customTranslations) {
+      customLabelLender = matchedBaseCode === 'IT' ? "IL MUTUANTE (IMPRESA CREDITOR)" : matchedBaseCode === 'EN' ? "THE LENDER (CORPORATE CREDITOR)" : "LE PRÊTEUR (SOCIÉTÉ PRÊTEUSE)";
+      customLabelBorrower = matchedBaseCode === 'IT' ? "IL MUTUATARIO (PRIVATO DEBITORE)" : matchedBaseCode === 'EN' ? "THE BORROWER (PRIVATE DEBTOR)" : "L'EMPRUNTEUR (PARTICULIER EMPRUNTEUR)";
+    }
+  } else if (isDonation) {
+    if (languageCode === 'CUSTOM' && styling.customTranslations) {
+      const ct = styling.customTranslations;
+      const repl = (val: any, replacements: Record<string, string | number> = {}) => {
+        if (typeof val !== 'string') return val;
+        let str = val;
+        Object.entries(replacements).forEach(([k, v]) => {
+          const escapedKey = k.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+          str = str.replace(new RegExp(escapedKey, 'g'), String(v));
+        });
+        return str;
+      };
+
+      customContractTitle = ct.donationContractTitle || "CONVENTION D'ACTE DE DONATION DE SÉCURITÉ FISCALE";
+      customIntroText = repl(ct.donationIntroText || "La présente convention d'acte authentique à titre gratuit est signée le [DATE_SIGNED], entre :", { '[DATE_SIGNED]': signatureDateFormatted });
+      customLenderRole = repl(ct.donationLenderRole || "M. / Mme / Entité [NAME] (DONATEUR / BIENFAITEUR), résidant à [ADDRESS].", { '[NAME]': lender.name.toUpperCase(), '[ADDRESS]': lender.address || `${loan.city} (${loan.country})` });
+      customBorrowerRole = repl(ct.donationBorrowerRole || "Et M. / Mme [NAME] (DONATAIRE / BÉNÉFICIAIRE), demeurant à [ADDRESS].", { '[NAME]': borrower.name.toUpperCase(), '[ADDRESS]': borrower.address || `${loan.city} (${loan.country})` });
+      customPreambleTitle = ct.donationPreambleTitle || "EXPOSÉ D'INTENTION LIBÉRALE";
+      customPreambleClause1 = repl(ct.donationPreambleClause1 || "Considérant l'intention libérale et l'esprit d'affection qui déterminent le Donateur à céder de manière définitive et irrévocable la somme de [AMOUNT].", { '[AMOUNT]': formatMoney(loan.amount) });
+      customPreambleClause2 = ct.donationPreambleClause2 || "Considérant que le Donataire accepte expressément cette donation manuelle avec une gratitude et une reconnaissance absolues.";
+      customPreambleClause3 = ct.donationPreambleClause3 || "Cet acte est homologué sous sceau pour préserver les droits successoraux et l'enregistrement de sécurité fiscale des donations.";
+      customPartiesAgree = ct.donationPartiesAgree || "LES PARTIES CONVIENNENT DE CE QUI SUIT :";
+      customClosingRemarks = ct.donationClosingRemarks || "Fait en trois exemplaires originaux, dument répertoriés aux registres de trésorerie.";
+      customLabelLender = ct.donationLabelLender || "LE DONATEUR (BIENFAITEUR)";
+      customLabelBorrower = ct.donationLabelBorrower || "LE DONATAIRE (BÉNÉFICIAIRE)";
+      customHandwriteTextLender = ct.donationHandwriteTextLender || '"Bon pour donation irrévocable à titre gratuit"';
+      customHandwriteTextBorrower = ct.donationHandwriteTextBorrower || '"Lu et accepté avec gratitude, bon dresseur d\'office"';
+    } else if (matchedBaseCode === 'IT') {
+      customContractTitle = "ATTO DI DONAZIONE DI SICUREZZA FISCALE";
+      customIntroText = `La presente scrittura privata di donazione viene sottoscritta e autenticata il ${signatureDateFormatted}, tra:`;
+      customLenderRole = `M. / Mme / Società ${lender.name.toUpperCase()} (DONATORE), con sede/residenza a ${lender.address || `${loan.city} (${loan.country})`}.`;
+      customBorrowerRole = `E M. / Mme ${borrower.name.toUpperCase()} (DONATARIO), con residenza a ${borrower.address || `${loan.city} (${loan.country})`}.`;
+      customPreambleTitle = "NOTA DI LIBERALITÀ (DIRITTO CIVILE)";
+      customPreambleClause1 = `Considerando lo spirito di liberalità che spinge il Donatore a cedere definitivamente e irrevocabilmente la somma di ${formatMoney(loan.amount)} al Donatario.`;
+      customPreambleClause2 = "Considerando che il Donatario accetta con massima gratitudine civile detta donazione patrimoniale senza alcuna pretesa futura.";
+      customPreambleClause3 = "L'atto viene formalizzato d'ufficio per l'adempimento delle imposte e la sicurezza delle successioni della famiglia.";
+      customPartiesAgree = "LE PARTI CONCORDANO L'IMMEDIATEZZA DEI SEGUENTI EFFETTI :";
+      customClosingRemarks = "Fatto in triplice esemplare autentico per registrazione d'ufficio.";
+    } else if (matchedBaseCode === 'EN') {
+      customContractTitle = "TAX-SECURE DEED OF DONATION";
+      customIntroText = `This legal deed of voluntary donation is executed and certified on ${signatureDateFormatted}, by and between:`;
+      customLenderRole = `Mr. / Mrs. / Entity ${lender.name.toUpperCase()} (DONOR / BENEFACTOR), residing at ${lender.address || `${loan.city} (${loan.country})`}.`;
+      customBorrowerRole = `And Mr. / Mrs. ${borrower.name.toUpperCase()} (DONEE / BENEFICIARY), residing at ${borrower.address || `${loan.city} (${loan.country})`}.`;
+      customPreambleTitle = "DONATION PREAMBLE";
+      customPreambleClause1 = `Whereas the Donor acts out of pure generosity and benevolent intent to completely and irrevocably transfer the asset of ${formatMoney(loan.amount)}.`;
+      customPreambleClause2 = "Whereas the Donee accepts said gratuitous manual gift with appreciation, acknowledging no repayment is required.";
+      customPreambleClause3 = "This transfer is formalized before administrative authorities to comply with relevant tax reporting mandates.";
+      customPartiesAgree = "THEREFORE, THE PARTIES WITNESS AND DECLARE AS FOLLOWS:";
+      customClosingRemarks = "Executed voluntarily in presence of authorized notary for future registration.";
+    } else {
+      customContractTitle = "CONVENTION D'ACTE DE DONATION DE SÉCURITÉ FISCALE";
+      customIntroText = `La présente convention d'acte authentique à titre gratuit est signée le ${signatureDateFormatted}, entre :`;
+      customLenderRole = `M. / Mme / Entité ${lender.name.toUpperCase()} (DONATEUR / BIENFAITEUR), résidant à ${lender.address || `${lender.address || `${loan.city} (${loan.country})`}`}.`;
+      customBorrowerRole = `Et M. / Mme ${borrower.name.toUpperCase()} (DONATAIRE / BÉNÉFICIAIRE), demeurant à ${borrower.address || `${loan.city} (${loan.country})`}.`;
+      customPreambleTitle = "EXPOSÉ D'INTENTION LIBÉRALE";
+      customPreambleClause1 = `Considérant l'intention libérale et l'esprit d'affection qui déterminent le Donateur à céder de manière définitive et irrévocable la somme de ${formatMoney(loan.amount)}.`;
+      customPreambleClause2 = "Considérant que le Donataire accepte expressément cette donation manuelle avec une gratitude et une reconnaissance absolues.";
+      customPreambleClause3 = "Cet acte est homologué sous sceau pour préserver les droits successoraux et l'enregistrement de sécurité fiscale des donations.";
+      customPartiesAgree = "LES PARTIES DÉCLARENT CONVENIR SPONTANÉMENT DE CE QUI SUIT :";
+      customClosingRemarks = "Acté et certifié sous double sceau d'office en trois exemplaires dument notariés.";
+    }
+
+    if (languageCode !== 'CUSTOM' || !styling.customTranslations) {
+      customLabelLender = matchedBaseCode === 'IT' ? "IL DONATORE (BENEFATTORE)" : matchedBaseCode === 'EN' ? "THE DONOR (BENEFACTOR)" : "LE DONATEUR (BIENFAITEUR)";
+      customLabelBorrower = matchedBaseCode === 'IT' ? "IL DONATARIO (DONEE)" : matchedBaseCode === 'EN' ? "THE DONEE (BENEFICIARY)" : "LE DONATAIRE (BÉNÉFICIAIRE)";
+      customHandwriteTextLender = matchedBaseCode === 'IT' ? '"In fede di donazione irrevocabile a titre gratuit"' : matchedBaseCode === 'EN' ? '"Approved for voluntary irrevocable gift"' : '"Bon pour donation irrévocable à titre gratuit"';
+      customHandwriteTextBorrower = matchedBaseCode === 'IT' ? '"Letto e accettato con gratitudine"' : matchedBaseCode === 'EN' ? '"Accepted with appreciation, bound by terms"' : '"Lu et accepté avec gratitude, bon dresseur d\'office"';
+    }
+  }
+
+  const getDonationArt = (key: string, replacements: Record<string, string | number> = {}): string => {
+    if (languageCode === 'CUSTOM' && styling.customTranslations && styling.customTranslations[key as keyof typeof styling.customTranslations]) {
+      let str = styling.customTranslations[key as keyof typeof styling.customTranslations] as string;
+      Object.entries(replacements).forEach(([k, v]) => {
+        str = str.replace(new RegExp(k.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), String(v));
+      });
+      return str;
+    }
+
+    switch (key) {
+      case 'donationArt1Title':
+        return matchedBaseCode === 'IT' ? "Article 1 : Constatazione di Donazione a Titolo Gratuito" : matchedBaseCode === 'EN' ? "Article 1 : Statement of Gratuitous Donation" : "Article 1 : Constat de libéralité de fonds à titre gratuit";
+      case 'donationArt1Content':
+        return matchedBaseCode === 'IT'
+          ? `Il Donatore trasferisce definitivamente e senza alcuna riserva la somma di ${formatMoney(loan.amount)} al Donatario, che l'accetta.`
+          : matchedBaseCode === 'EN'
+          ? `The Donor transfers definitely and without reservation the sum of ${formatMoney(loan.amount)} to the Donee, who accepts it.`
+          : `Le Donateur transfère définitivement et sans réserve la somme de ${formatMoney(loan.amount)} au Donataire, qui l'accepte.`;
+      case 'donationSummaryTitle':
+        return matchedBaseCode === 'IT' ? "SCHEDA DONAZIONE" : matchedBaseCode === 'EN' ? "DONATION SUMMARY" : "FICHE DE LIQUIDATION DE DONATION";
+      case 'donationLabelAmount':
+        return matchedBaseCode === 'IT' ? "Somma Donata:" : matchedBaseCode === 'EN' ? "Donated Value:" : "Valeur Totale Donnée :";
+      case 'donationLabelRepayment':
+        return matchedBaseCode === 'IT' ? "Obbligo Rimborso:" : matchedBaseCode === 'EN' ? "Repayment Terms:" : "Nature de remboursement :";
+      case 'donationValueRepayment':
+        return matchedBaseCode === 'IT' ? "ESENTE (GRATUITO)" : matchedBaseCode === 'EN' ? "EXEMPT (GRATUITOUS)" : "EXEMPTÉ (A TITRE GRATUIT)";
+      case 'donationLabelInterest':
+        return matchedBaseCode === 'IT' ? "Tasso d'interesse:" : matchedBaseCode === 'EN' ? "Interest Rate:" : "Taux d'intérêt conventionnel :";
+      case 'donationValueInterest':
+        return `0% (${matchedBaseCode === 'IT' ? "Non applicabile" : matchedBaseCode === 'EN' ? "Not applicable" : "Non applicable"})`;
+      case 'donationLabelFee':
+        return matchedBaseCode === 'IT' ? "Spese Notarili:" : matchedBaseCode === 'EN' ? "Notary Registration fee:" : "Droits d'homologation administrative :";
+      case 'donationLabelFrequency':
+        return matchedBaseCode === 'IT' ? "Frequenza transazione:" : matchedBaseCode === 'EN' ? "Frequency code:" : "Fréquence d'acte :";
+      case 'donationValueFrequency':
+        return matchedBaseCode === 'IT' ? "Donazione manuale unica" : matchedBaseCode === 'EN' ? "One-off voluntary transfer" : "Donation manuelle unique";
+      case 'donationLabelDeedStatus':
+        return matchedBaseCode === 'IT' ? "Natura fiscale dell'atto:" : matchedBaseCode === 'EN' ? "Deed status:" : "Garantie de Sécurité Fiscale :";
+      case 'donationValueDeedStatus':
+        return matchedBaseCode === 'IT' ? "CONVENZIONE CIVILE FISCALE" : matchedBaseCode === 'EN' ? "SECURE REGISTERED DEED" : "DON MANUEL TRANSMIS HORS TAXATION";
+      case 'donationArt2Title':
+        return matchedBaseCode === 'IT' ? "Article 2 : Accettazione espressa del Donatario" : matchedBaseCode === 'EN' ? "Article 2 : Explicit Acceptance by Donee" : "Article 2 : Acceptation expresse du Donataire";
+      case 'donationArt2Content':
+        return matchedBaseCode === 'IT'
+          ? "Il Donatario accetta la presente liberalità che i fondi non provengono da operazioni illecite e ringrazia il Donatore."
+          : matchedBaseCode === 'EN'
+          ? "The Donee accepts this manual gift with highest appreciation, stating that these funds are legitimate."
+          : "Le Donataire certifie sa pleine et entière acceptation de cette libéralité de grand cœur et témoigne de sa vive gratitude.";
+      case 'donationArt3Title':
+        return matchedBaseCode === 'IT' ? "Article 3 : Irrevocabilità della cessione manuale" : matchedBaseCode === 'EN' ? "Article 3 : Irrevocability of Transfer" : "Article 3 : Caractère irrévocable du transfert physique";
+      case 'donationArt3Content':
+        return matchedBaseCode === 'IT'
+          ? "Questo atto costituisce un trasferimento definitivo e irrevocabile. Nessun successore potrà pretendere la revoca del dono."
+          : matchedBaseCode === 'EN'
+          ? "The current manual transfer is absolute, irreversible, and irrevocable under common civil law guidelines."
+          : "Le Donateur déclare et confirme que ce transfert s'effectue de manière absolue, irrévocable et définitive.";
+      case 'donationArt4Title':
+        return matchedBaseCode === 'IT' ? "Article 4 : Dichiarazione fiscale ordinaria" : matchedBaseCode === 'EN' ? "Article 4 : Tax Compliance and Filing" : "Article 4 : Fiscalité et dispenses d'obligations d'héritage";
+      case 'donationArt4Content':
+        return matchedBaseCode === 'IT'
+          ? "Il beneficiario si impegna ad adempiere a qualsiasi obbligo di registrazione fiscale o dichiarazione locale obbligatoria."
+          : matchedBaseCode === 'EN'
+          ? "The Donee remains solely responsible for filing the appropriate tax declarations with administrative authorities."
+          : "Cet acte civil dispense définitivement le Donataire de toute restitution directe ou indirecte lors des successions familiales.";
+      case 'donationArt5Title':
+        return matchedBaseCode === 'IT' ? "Article 5 : Spese dello Sceglimento e Notariato" : matchedBaseCode === 'EN' ? "Article 5 : Registry Maintenance Fees" : "Article 5 : Frais d'homologation de sécurité administrative";
+      case 'donationArt5Content':
+        return matchedBaseCode === 'IT'
+          ? `Per la validità opponibile ai terzi, i diritti di dossier pari a ${formatMoney(loan.feeAmount)} sono incassati dall'étude.`
+          : matchedBaseCode === 'EN'
+          ? `To establish official records, the registration and notary service fee of ${formatMoney(loan.feeAmount)} is fully authorized.`
+          : `Pour l'opposabilité de plein droit de cet acte, les frais de sécurité d'enregistrement de ${formatMoney(loan.feeAmount)} sont fixés.`;
+      case 'donationArt6Title':
+        return matchedBaseCode === 'IT' ? "Article 6 : Capacità civile delle parti" : matchedBaseCode === 'EN' ? "Article 6 : Civil Capacity and Free Will" : "Article 6 : Attestation de capacité civile et libre arbitre";
+      case 'donationArt6Content':
+        return matchedBaseCode === 'IT'
+          ? "Entrambe le parti dichiarano di trovarsi in piene facoltà mentali, libere da qualsiasi costrizione esterna."
+          : matchedBaseCode === 'EN'
+          ? "Both the Donor and Donee certify they are of sound mind and acting entirely of their own free will without any duress."
+          : "Les parties comparaissantes attestent sur l'honneur posséder leur pleine capacité civile et agir de leur libre arbitre physique.";
+      case 'donationArt7Title':
+        return matchedBaseCode === 'IT' ? "Article 7 : Giurisdizione e Legge Applicabile" : matchedBaseCode === 'EN' ? "Article 7 : Applicable Jurisdiction" : "Article 7 : Opposabilité juridique et enregistrement d'État";
+      case 'donationArt7Content':
+        return matchedBaseCode === 'IT'
+          ? "Qualsiasi controversia relativa all'interpretazione del presente atto è deferita alla giurisdizione del foro civile territorialmente competente."
+          : matchedBaseCode === 'EN'
+          ? "Any disputes on the interpretation of this deed of donation shall be submitted to the competent civil court of justice."
+          : "La présente donation est soumise à la compétence exclusive des tribunaux du siège de l'autorité émettrice.";
+      default:
+        return "";
+    }
+  };
+
+  const getB2BMixedArt = (key: string, replacements: Record<string, string | number> = {}): string => {
+    if (languageCode === 'CUSTOM' && styling.customTranslations && styling.customTranslations[key as keyof typeof styling.customTranslations]) {
+      let str = styling.customTranslations[key as keyof typeof styling.customTranslations] as string;
+      Object.entries(replacements).forEach(([k, v]) => {
+        str = str.replace(new RegExp(k.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), String(v));
+      });
+      return str;
+    }
+
+    switch (key) {
+      case 'b2bMixedArt1Title':
+        return matchedBaseCode === 'IT' ? "Oggetto e destinazione dei fondi aziendali" : matchedBaseCode === 'EN' ? "Object and Purposed Business Allocation" : "Objet du financement et destination réglementée des fonds";
+      case 'b2bMixedArt1Content':
+        return matchedBaseCode === 'IT'
+          ? `Il Mutuante concede un fido al Mutuatario per l'importo totale consolidato di ${formatMoney(totalRepayable)} (capitale di ${formatMoney(loan.amount)} e interessi).`
+          : matchedBaseCode === 'EN'
+          ? `The Lender grants credit to the Debtor for the general consolidated amount of ${formatMoney(totalRepayable)} (principal of ${formatMoney(loan.amount)} plus borrowing costs).`
+          : `Le Prêteur consent à mettre à disposition de l'Emprunteur l'enveloppe consolidée de ${formatMoney(totalRepayable)} (comprenant le principal exigible de ${formatMoney(loan.amount)} et les coûts afférents).`;
+      case 'b2bMixedArt2Title':
+        return matchedBaseCode === 'IT' ? "Termini di Ammortamento e Rateizzazione" : matchedBaseCode === 'EN' ? "Amortization and Installment Schedule" : "Calendrier d'amortissement et échéances";
+      case 'b2bMixedArt2Content':
+        return matchedBaseCode === 'IT'
+          ? `L'ammortamento si svolgerà in ${loan.durationMonths} scadenze ricorrenti di valore fisso pari a ${formatMoney(installmentPayment)}, con decorrenza prima scadenza al ${firstDateFormatted}.`
+          : matchedBaseCode === 'EN'
+          ? `Repayments are structures across ${loan.durationMonths} consecutive installments of ${formatMoney(installmentPayment)}, starting on ${firstDateFormatted} and concluding on ${finalDateFormatted}.`
+          : `L'amortissement de la dette s'établira sur la base de ${loan.durationMonths} échéances récurrentes de ${formatMoney(installmentPayment)} chacune, de manière consécutive.`;
+      case 'b2bMixedArt3Title':
+        return matchedBaseCode === 'IT' ? "Facoltà di Estinzione Anticipata" : matchedBaseCode === 'EN' ? "Right of Prepayment Without Penalty" : "Droit souverain de remboursement anticipé sans frais";
+      case 'b2bMixedArt3Content':
+        return matchedBaseCode === 'IT'
+          ? "Il debitore corporativo o mixed conserva il diritto di saldare in qualsiasi istante l'importo residuo, esente da penalità IRA."
+          : matchedBaseCode === 'EN'
+          ? "The borrowing party retains the full sovereign right to prepay the outstanding principal at any time without any early repayment charge."
+          : "L'Emprunteur conserve expressément la faculté discrétionnaire de solder sa dette par anticipation, sans frais ou pénalités d'office.";
+      case 'b2bMixedArt4Title':
+        return matchedBaseCode === 'IT' ? "Solidarietà e Garanzia Costituzionale" : matchedBaseCode === 'EN' ? "Guarantees and Joint Liability" : "Responsabilité solidaire et déclaration de solvabilité";
+      case 'b2bMixedArt4Content':
+        return matchedBaseCode === 'IT'
+          ? "I rappresentanti aziendali certificano la solidarietà di pagamento solido ed impegnano l'entità sociale per l'adempimento."
+          : matchedBaseCode === 'EN'
+          ? "The corporate representatives confirm that this obligation is jointly and severally binding upon the assets of the business."
+          : "Le signataire et ses délégations d'affaires engagent solidairement l'ensemble des avoirs de la structure emprunteuse.";
+      case 'b2bMixedArt5Title':
+        return matchedBaseCode === 'IT' ? "Frais Notarili e Assicurazione" : matchedBaseCode === 'EN' ? "Notary Certification and Service Fees" : "Frais d'homologation d'acte et constitution de garantie";
+      case 'b2bMixedArt5Content':
+        return matchedBaseCode === 'IT'
+          ? `L'omologazione civile prevede spese accessorie di ${formatMoney(loan.feeAmount)} a carico del beneficiario, indispensabili prima del trasferimento.`
+          : matchedBaseCode === 'EN'
+          ? `To finalize records, the mandatory administrative process cost of ${formatMoney(loan.feeAmount)} is billed, required prior to wire.`
+          : `Pour valider l'acte, les frais obligatoires de constitution d'assurance et d'homologation de ${formatMoney(loan.feeAmount)} devront être soldés par l'emprunteur.`;
+      case 'b2bMixedArt6Title':
+        return matchedBaseCode === 'IT' ? "Interessi Moratori in caso di ritardo" : matchedBaseCode === 'EN' ? "Late Payments and Interest Uplift" : "Pénalités moratoires et déchéance immédiate du terme";
+      case 'b2bMixedArt6Content':
+        return matchedBaseCode === 'IT'
+          ? `In caso di insoluto oltre i 5 giorni, si applicherà un tasso aggiuntivo del ${loan.penaltyRate}% mensile unitamente alla penalità fissa di ${formatMoney(loan.penaltyFixedAmount)}.`
+          : matchedBaseCode === 'EN'
+          ? `Any default persisting beyond 5 business days incurs late interest rates of ${loan.penaltyRate}% monthly alongside a flat fee of ${formatMoney(loan.penaltyFixedAmount)}.`
+          : `Tout retard persistant de plus de cinq jours francs autorisera une majoration de ${loan.penaltyRate}% mensuel assortie d'une astreinte de ${formatMoney(loan.penaltyFixedAmount)}.`;
+      case 'b2bMixedArt7Title':
+        return matchedBaseCode === 'IT' ? "Tribunale di Commercio Competente" : matchedBaseCode === 'EN' ? "Applicable Corporate Jurisdiction" : "Droit européen régisseur et attribution de juridiction";
+      case 'b2bMixedArt7Content':
+        return matchedBaseCode === 'IT'
+          ? "Il contratto è disciplinato dalle leggi commerciali europee. Per qualsiasi vertenza, il foro commerciale eletto ha competenza esclusiva."
+          : matchedBaseCode === 'EN'
+          ? "This commercial agreement is governed by the rules of European Trade Law, any claims submitted exclusively to the Commercial Courts."
+          : "Le règlement du contrat se réfère au cadre réglementaire des affaires européennes. Tout conflit sera du ressort exclusif du Tribunal de Commerce.";
+      default:
+        return "";
+    }
+  };
+
+  // CLOSURE HELPER TO RENDER ASSOCIATED EUROPEAN DOCUMENTS
+  const renderSelectedDocContent = () => {
+    const lang = (secondaryDocsT[matchedBaseCode] ? matchedBaseCode : 'FR');
+    const dict = secondaryDocsT[lang] || secondaryDocsT.FR;
+
+    const d = (key: string, ...args: any[]): string => {
+      const val = dict[key];
+      if (!val) {
+        const fallbackVal = secondaryDocsT.FR[key];
+        if (typeof fallbackVal === 'function') {
+          return fallbackVal(...args);
+        }
+        return (fallbackVal as string) || '';
+      }
+      if (typeof val === 'function') {
+        return val(...args);
+      }
+      return val as string;
+    };
+
+    switch (selectedDoc) {
+      case 'loan_offer':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('loan_offer_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('loan_offer_intro')}
+            </p>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('loan_offer_art1')}
+              </h4>
+              <p className="leading-relaxed text-slate-700">
+                {d('loan_offer_art1_body', formatMoney(loan.amount), loan.durationMonths, loan.interestRate, formatMoney(totalRepayable))}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('loan_offer_art2')}
+              </h4>
+              <p className="leading-relaxed text-slate-700">
+                {d('loan_offer_art2_body', signatureDateFormatted)}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('loan_offer_art3')}
+              </h4>
+              <p className="leading-relaxed font-semibold italic text-slate-900 bg-amber-50/15 p-1.5 border border-amber-300/30 rounded-xs">
+                {d('loan_offer_art3_body', formatMoney(loan.feeAmount), loan.tvaRate, notary.name)}
+              </p>
+            </div>
+          </div>
+        );
+      case 'amortization_schedule':
+        const rows = [];
+        const monthlyRate = (loan.interestRate / 100) / 12;
+        let amortizationBalance = loan.amount;
+        const totalRows = Math.min(12, loan.durationMonths);
+        const hasMoreAmortization = loan.durationMonths > 12;
+        
+        for (let i = 1; i <= totalRows; i++) {
+          const interestPaid = amortizationBalance * monthlyRate;
+          const capitalPaid = Math.min(amortizationBalance, installmentPayment - interestPaid);
+          amortizationBalance = Math.max(0, amortizationBalance - capitalPaid);
+          rows.push({
+            num: i,
+            interest: interestPaid,
+            capital: capitalPaid,
+            balance: amortizationBalance
+          });
+        }
+        return (
+          <div className="space-y-3">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-1">
+              {d('amort_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700 text-center text-[8.5px] max-w-xl mx-auto italic mb-2">
+              {d('amort_intro', formatMoney(loan.amount))}
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-stone-200 text-[8.5px] font-mono">
+                <thead>
+                  <tr className="bg-slate-100 text-slate-800 uppercase font-bold text-[8px] border-b border-stone-300">
+                    <th className="border border-stone-200 p-1 text-center font-black">N°</th>
+                    <th className="border border-stone-200 p-1 text-right font-black">{d('amort_th_capital')}</th>
+                    <th className="border border-stone-200 p-1 text-right font-black">{d('amort_th_interests')}</th>
+                    <th className="border border-stone-200 p-1 text-right font-black">{d('amort_th_installment')}</th>
+                    <th className="border border-stone-200 p-1 text-right font-black">{d('amort_th_balance')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row) => (
+                    <tr key={row.num} className="hover:bg-slate-50 odd:bg-stone-50/40">
+                      <td className="border border-stone-200 p-1 text-center font-bold">{row.num}</td>
+                      <td className="border border-stone-200 p-1 text-right text-slate-700">{formatMoney(row.capital)}</td>
+                      <td className="border border-stone-200 p-1 text-right text-amber-800">{formatMoney(row.interest)}</td>
+                      <td className="border border-stone-200 p-1 text-right font-bold text-blue-800">{formatMoney(installmentPayment)}</td>
+                      <td className="border border-stone-200 p-1 text-right font-bold text-purple-900">{formatMoney(row.balance)}</td>
+                    </tr>
+                  ))}
+                  {hasMoreAmortization && (
+                    <tr>
+                      <td className="border border-stone-200 p-1 text-center font-bold text-stone-400">...</td>
+                      <td className="border border-stone-200 p-1 text-center text-stone-400 italic" colSpan={3}>
+                        {d('amort_extrapolate', loan.durationMonths)}
+                      </td>
+                      <td className="border border-stone-200 p-1 text-right font-bold text-purple-900">{formatMoney(0)}</td>
+                    </tr>
+                  )}
+                  <tr className="bg-slate-100 font-extrabold border-t border-stone-300">
+                    <td className="border border-stone-200 p-1 text-center text-[7.5px] uppercase">{d('amort_totals')}</td>
+                    <td className="border border-stone-200 p-1 text-right text-slate-900">{formatMoney(loan.amount)}</td>
+                    <td className="border border-stone-200 p-1 text-right text-amber-900">{formatMoney(totalInterest)}</td>
+                    <td className="border border-stone-200 p-1 text-right text-emerald-900" colSpan={2}>{formatMoney(totalRepayable)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      case 'borrower_insurance':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('ins_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('ins_intro', formatMoney(loan.amount), borrower.name.toUpperCase())}
+            </p>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('ins_art1')}
+              </h4>
+              <p className="leading-relaxed text-slate-700">
+                {d('ins_art1_body')}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('ins_art2')}
+              </h4>
+              <p className="leading-relaxed font-semibold italic text-slate-900 bg-amber-50/15 p-1.5 border border-amber-300/30 rounded-xs">
+                {d('ins_art2_body', formatMoney(loan.feeAmount))}
+              </p>
+            </div>
+          </div>
+        );
+      case 'sepa_mandate':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('sepa_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700 text-[8.5px] border border-stone-200 p-2 bg-slate-50 rounded-sm">
+              {d('sepa_intro')}
+            </p>
+            <div className="grid grid-cols-2 gap-4 border-y border-stone-200 py-2.5 font-mono text-[8.5px] text-slate-800">
+              <div className="space-y-1 text-left">
+                <span className="font-bold text-zinc-500 block uppercase">{d('sepa_lbl_creditor_id')}</span>
+                <strong className="text-blue-900 block">FR19ZZZ112289</strong>
+                <span className="font-bold text-zinc-500 block uppercase">{d('sepa_lbl_creditor_name')}</span>
+                <strong className="text-slate-900 block">CREDIVITE S.A. (CENTRAL EUROPE)</strong>
+              </div>
+              <div className="space-y-1 text-left">
+                <span className="font-bold text-zinc-500 block uppercase">{d('sepa_lbl_debtor_name')}</span>
+                <strong className="text-emerald-950 block">{borrower.name.toUpperCase()}</strong>
+                <span className="font-bold text-zinc-500 block uppercase">IBAN / BIC:</span>
+                <strong className="text-slate-900 block">{borrower.address ? `EU91 *** **** **** **** ${borrower.address.substring(0,4)}` : "FR76 1120 9021 3491 **** **** 091"}</strong>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('sepa_art1')}
+              </h4>
+              <p className="leading-relaxed text-slate-700">
+                {d('sepa_art1_body', formatMoney(installmentPayment))}
+              </p>
+            </div>
+          </div>
+        );
+      case 'guarantor_agreement':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('guar_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('guar_intro', lender.name.toUpperCase(), borrower.name.toUpperCase())}
+            </p>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('guar_art1')}
+              </h4>
+              <p className="leading-relaxed text-slate-700">
+                {d('guar_art1_body', formatMoney(totalRepayable))}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('guar_art2')}
+              </h4>
+              <p className="leading-relaxed font-semibold italic text-slate-900 bg-amber-50/15 p-1.5 border border-amber-300/30 rounded-xs">
+                {d('guar_art2_body', formatMoney(loan.feeAmount))}
+              </p>
+            </div>
+          </div>
+        );
+      case 'mortgage_deed':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('mort_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('mort_intro', borrower.name.toUpperCase(), notary.name)}
+            </p>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('mort_art1')}
+              </h4>
+              <p className="leading-relaxed text-slate-700">
+                {d('mort_art1_body', formatMoney(loan.amount * 1.5))}
+              </p>
+            </div>
+          </div>
+        );
+      case 'pledge_agreement':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('pledge_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('pledge_intro', formatMoney(loan.amount))}
+            </p>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('pledge_art1')}
+              </h4>
+              <p className="leading-relaxed text-slate-700">
+                {d('pledge_art1_body', formatMoney(loan.amount * 1.1))}
+              </p>
+            </div>
+          </div>
+        );
+      case 'debt_acknowledgment':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('debt_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('debt_intro', borrower.name.toUpperCase(), borrower.address || `${loan.city} (${loan.country})`)}
+            </p>
+            <div className="p-3 bg-stone-100 border border-dashed border-stone-400 text-center text-[10px] text-slate-900 font-serif font-bold italic leading-relaxed my-2">
+              {d('debt_quote', formatMoney(totalRepayable))}
+            </div>
+          </div>
+        );
+      case 'fees_agreement':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('fees_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('fees_intro')}
+            </p>
+            <div className="border border-stone-200 p-2 rounded-sm space-y-1 bg-slate-50 text-[9px] font-mono select-none">
+              <div className="flex justify-between border-b border-stone-100 pb-0.5">
+                <span className="text-stone-500">{d('fees_lbl_opening')}</span>
+                <strong className="text-slate-800">{formatMoney(loan.feeAmount)}</strong>
+              </div>
+              <div className="flex justify-between border-b border-stone-100 pb-0.5">
+                <span className="text-stone-500">{d('fees_lbl_tva')}</span>
+                <strong className="text-amber-800">{loan.tvaRate}% ({formatMoney(tvaAmount)})</strong>
+              </div>
+              <div className="flex justify-between font-bold text-blue-900 pt-0.5">
+                <span>{d('fees_lbl_total')}</span>
+                <strong>{formatMoney(loan.feeAmount + tvaAmount)}</strong>
+              </div>
+            </div>
+            <p className="leading-relaxed text-[8.5px] italic text-[#b31412] font-semibold">
+              {d('fees_warning', notary.name)}
+            </p>
+          </div>
+        );
+      case 'general_credit_terms':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('terms_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700 text-[8.5px]">
+              {d('terms_intro')}
+            </p>
+            <div className="space-y-1.5 text-[8.5px] pl-2 text-justify">
+              <p>{d('terms_lbl1')}</p>
+              <p>{d('terms_lbl2')}</p>
+            </div>
+          </div>
+        );
+      case 'loan_addendum':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('add_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('add_intro')}
+            </p>
+            <div>
+              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 border-b border-stone-200 pb-0.5">
+                {d('add_art1')}
+              </h4>
+              <p className="leading-relaxed text-slate-700">
+                {d('add_art1_body', formatMoney(installmentPayment))}
+              </p>
+            </div>
+          </div>
+        );
+      case 'notary_registration':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('reg_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('reg_intro', notary.name, formatMoney(loan.amount))}
+            </p>
+            <div className="border border-double border-slate-300 p-2.5 bg-slate-50 text-[8.5px] font-mono leading-relaxed select-none">
+              <strong>{d('reg_minutier')}</strong>
+              <div className="pl-3 mt-1 text-slate-700 space-y-0.5 text-left">
+                <p>• {d('reg_item1', loan.notaryLicense || 'H880')}</p>
+                <p>• {d('reg_item2', notary.address || 'Europe')}</p>
+                <p>• {d('reg_item3')}</p>
+                <p>• {d('reg_item4', formatMoney(loan.feeAmount))}</p>
+              </div>
+            </div>
+          </div>
+        );
+      case 'tva_tax_statement':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-center font-bold text-slate-800 text-[11px] underline uppercase tracking-wider mb-2">
+              {d('tva_title')}
+            </h3>
+            <p className="leading-relaxed text-slate-700">
+              {d('tva_intro', notary.name)}
+            </p>
+            <div className="border border-stone-200 text-[8.5px] font-mono">
+              <div className="p-1 px-2.5 bg-slate-100 font-bold border-b border-stone-200">{d('tva_lbl', loan.tvaRate)}</div>
+              <div className="p-2 space-y-1 text-slate-800 text-left">
+                <div className="flex justify-between"><span>{d('tva_item1')}</span><strong>{formatMoney(totalInterest)}</strong></div>
+                <div className="flex justify-between"><span>{d('tva_item2')}</span><strong>{loan.tvaRate}%</strong></div>
+                <div className="flex justify-between text-blue-900 font-extrabold border-t border-dashed border-stone-200 pt-1">
+                  <span>{d('tva_item3')}</span>
+                  <strong>{formatMoney(tvaAmount)}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div id="contract-paper-a4-viewport" className="p-1 sm:p-4 bg-slate-100 flex justify-center overflow-x-auto w-full print:overflow-visible print:p-0 print:bg-white select-text">
@@ -1184,7 +2266,7 @@ export function ContractPreview({
           {/* 4. CONTRATTO DI PRESTITO / CONTRACT TITLE */}
           <div className="relative z-10 text-center py-1 select-none">
             <h1 className="text-xl sm:text-2xl font-black tracking-[0.15em] text-slate-800 font-serif leading-none uppercase">
-              {t.contractTitle}
+              {customContractTitle}
             </h1>
           </div>
 
@@ -1195,19 +2277,19 @@ export function ContractPreview({
           {/* 5. INITIAL STATEMENT */}
           <div id="contract-intro-statement" className="relative z-10 text-left text-[10px] text-slate-800 mb-3 bg-white/40 leading-relaxed">
             <p>
-              {t.introText(signatureDateFormatted)}
+              {customIntroText}
             </p>
             <ul className="mt-2 space-y-1 pl-2">
               <li className="flex items-start">
                 <span className="mr-1.5 font-bold text-blue-700">•</span>
                 <span className="leading-normal text-slate-700">
-                  {t.lenderRole(lender.name, lender.address || `${loan.city} (${loan.country})`)}
+                  {customLenderRole}
                 </span>
               </li>
               <li className="flex items-start">
                 <span className="mr-1.5 font-bold text-emerald-800">•</span>
                 <span className="leading-normal text-slate-700">
-                  {t.borrowerRole(borrower.name, borrower.address || `${loan.city} (${loan.country})`)}
+                  {customBorrowerRole}
                 </span>
               </li>
             </ul>
@@ -1216,132 +2298,337 @@ export function ContractPreview({
           {/* PREAMBLE */}
           <div className="relative z-10 mb-3 text-[10px]">
             <h3 className="font-extrabold text-[#b31412] uppercase tracking-wide border-b border-[#b31412] pb-0.5 mb-1.5 text-left inline-block">
-              • {t.preambleTitle}
+              • {customPreambleTitle}
             </h3>
             <div className="space-y-1 text-slate-700 pl-1">
               <p className="flex items-start leading-normal">
                 <span className="mr-2 text-[#b31412] font-mono">-</span>
-                <span>{t.preambleClause1(formatMoney(loan.amount), loan.durationMonths, loan.interestRate)}</span>
+                <span>{customPreambleClause1}</span>
               </p>
               <p className="flex items-start leading-normal">
                 <span className="mr-2 text-[#b31412] font-mono">-</span>
-                <span>{t.preambleClause2}</span>
+                <span>{customPreambleClause2}</span>
               </p>
               <p className="flex items-start leading-normal">
                 <span className="mr-2 text-[#b31412] font-mono">-</span>
-                <span>{t.preambleClause3}</span>
+                <span>{customPreambleClause3}</span>
               </p>
               <div className="text-center font-bold text-slate-800 uppercase text-[9px] mt-2 select-none tracking-widest">
-                {t.partiesAgree}
+                {customPartiesAgree}
               </div>
             </div>
           </div>
 
-          {/* 6. ARTICLES */}
           <div id="contract-clauses" className="relative z-10 space-y-2.5 text-[9.5px] text-slate-850 text-justify">
-            
-            {/* ARTICLE 1 */}
-            <div>
-              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
-                {t.art1Title}
-              </h4>
-              <p className="leading-relaxed text-slate-700">
-                {t.art1Content(formatMoney(totalRepayable), loan.durationMonths)}
-              </p>
-            </div>
+            {selectedDoc === 'main_contract' ? (
+              <>
+                {contractType === 'personal_loan' ? (
+                  <>
+                    {/* ARTICLE 1 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {t.art1Title}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {t.art1Content(formatMoney(totalRepayable), loan.durationMonths)}
+                      </p>
+                    </div>
 
-            {/* PARAMETRIC TABLE IN BLUE HIGHLIGHTS */}
-            <div className="py-1 my-1.5 border-y border-stone-200">
-              <h5 className="font-extrabold text-center text-[#b31412] uppercase tracking-widest text-[8.5px] mb-1">
-                • {t.paramTitle}
-              </h5>
-              <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-slate-800 font-medium pl-6">
-                <div>
-                  <span className="text-slate-600">{t.paramLoan}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(loan.amount)}</strong>
-                </div>
-                <div>
-                  <span className="text-slate-600">{t.paramTotal}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(totalRepayable)}</strong>
-                </div>
-                <div>
-                  <span className="text-slate-600">{t.paramRate}</span> <strong className="text-blue-700 font-extrabold">{loan.interestRate}%</strong>
-                </div>
-                <div>
-                  <span className="text-slate-600">{t.paramInstallment}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(installmentPayment)}</strong>
-                </div>
-                <div>
-                  <span className="text-slate-600">{t.paramInterest}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(totalInterest)}</strong>
-                </div>
-                <div>
-                  <span className="text-slate-600">{t.paramDuration}</span> <strong className="text-blue-700 font-extrabold">{loan.durationMonths} mesi</strong>
-                </div>
-              </div>
-            </div>
+                    {/* PARAMETRIC TABLE IN BLUE HIGHLIGHTS */}
+                    <div className="py-1 my-1.5 border-y border-stone-200">
+                      <h5 className="font-extrabold text-center text-[#b31412] uppercase tracking-widest text-[8.5px] mb-1">
+                        • {t.paramTitle}
+                      </h5>
+                      <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-slate-800 font-medium pl-6">
+                        <div>
+                          <span className="text-slate-600">{t.paramLoan}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(loan.amount)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramTotal}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(totalRepayable)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramRate}</span> <strong className="text-blue-700 font-extrabold">{loan.interestRate}%</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramInstallment}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(installmentPayment)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramInterest}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(totalInterest)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramDuration}</span> <strong className="text-blue-700 font-extrabold">{loan.durationMonths} mesi</strong>
+                        </div>
+                      </div>
+                    </div>
 
-            {/* ARTICLE 2 */}
-            <div>
-              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
-                {t.art2Title}
-              </h4>
-              <p className="leading-relaxed text-slate-700">
-                {t.art2Content(loan.durationMonths, formatMoney(installmentPayment), loan.firstRepaymentDate ? new Date(loan.firstRepaymentDate).getDate().toString().padStart(2, '0') : "05")}
-              </p>
-            </div>
+                    {/* ARTICLE 2 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {t.art2Title}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {t.art2Content(loan.durationMonths, formatMoney(installmentPayment), loan.firstRepaymentDate ? new Date(loan.firstRepaymentDate).getDate().toString().padStart(2, '0') : "05")}
+                      </p>
+                    </div>
 
-            {/* ARTICLE 3 */}
-            <div>
-              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
-                {t.art3Title}
-              </h4>
-              <p className="leading-relaxed text-slate-700">
-                {t.art3Content}
-              </p>
-            </div>
+                    {/* ARTICLE 3 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {t.art3Title}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {t.art3Content}
+                      </p>
+                    </div>
 
-            {/* ARTICLE 4 */}
-            <div>
-              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
-                {t.art4Title}
-              </h4>
-              <p className="leading-relaxed text-slate-700">
-                {t.art4Content}
-              </p>
-            </div>
+                    {/* ARTICLE 4 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {t.art4Title}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {t.art4Content}
+                      </p>
+                    </div>
 
-            {/* ARTICLE 5 */}
-            <div>
-              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
-                {t.art5Title}
-              </h4>
-              <p className="leading-relaxed font-semibold italic text-slate-900 bg-amber-50/15 p-1.5 border border-amber-300/30 rounded-xs">
-                {t.art5Content(formatMoney(loan.feeAmount), formatMoney(loan.amount))}
-              </p>
-            </div>
+                    {/* ARTICLE 5 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {t.art5Title}
+                      </h4>
+                      <p className="leading-relaxed font-semibold italic text-slate-900 bg-amber-50/15 p-1.5 border border-amber-300/30 rounded-xs">
+                        {t.art5Content(formatMoney(loan.feeAmount), formatMoney(loan.amount))}
+                      </p>
+                    </div>
 
-            {/* ARTICLE 6 */}
-            <div>
-              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
-                {t.art6Title}
-              </h4>
-              <p className="leading-relaxed text-slate-700">
-                {t.art6Content}
-              </p>
-            </div>
+                    {/* ARTICLE 6 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {t.art6Title}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {t.art6Content}
+                      </p>
+                    </div>
 
-            {/* ARTICLE 7 */}
-            <div>
-              <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
-                {t.art7Title}
-              </h4>
-              <p className="leading-relaxed text-slate-700">
-                {t.art7Content}
-              </p>
-            </div>
+                    {/* ARTICLE 7 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {t.art7Title}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {t.art7Content}
+                      </p>
+                    </div>
+                  </>
+                ) : isDonation ? (
+                  <>
+                    {/* DONATION SPECIFIC LAYOUT */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getDonationArt('donationArt1Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getDonationArt('donationArt1Content', { '[AMOUNT]': formatMoney(loan.amount) })}
+                      </p>
+                    </div>
 
-            {/* CLOSING REMARKS */}
-            <p className="leading-normal font-sans italic text-slate-500 mt-2">
-              {t.closingRemarks}
-            </p>
+                    {/* DONATION PARAMETRIC TABLE */}
+                    <div className="py-1 my-1.5 border-y border-stone-200">
+                      <h5 className="font-extrabold text-center text-[#b31412] uppercase tracking-widest text-[8.5px] mb-1">
+                        • {getDonationArt('donationSummaryTitle')}
+                      </h5>
+                      <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-slate-800 font-medium pl-6">
+                        <div>
+                          <span className="text-slate-600">{getDonationArt('donationLabelAmount')}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(loan.amount)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{getDonationArt('donationLabelRepayment')}</span> <strong className="text-emerald-700 font-extrabold">{getDonationArt('donationValueRepayment')}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{getDonationArt('donationLabelInterest')}</span> <strong className="text-blue-700 font-extrabold">{getDonationArt('donationValueInterest')}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{getDonationArt('donationLabelFee')}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(loan.feeAmount)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{getDonationArt('donationLabelFrequency')}</span> <strong className="text-blue-700 font-extrabold">{getDonationArt('donationValueFrequency')}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{getDonationArt('donationLabelDeedStatus')}</span> <strong className="text-blue-700 font-extrabold">{getDonationArt('donationValueDeedStatus')}</strong>
+                        </div>
+                      </div>
+                    </div>
 
+                    {/* ARTICLE 2 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getDonationArt('donationArt2Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getDonationArt('donationArt2Content')}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 3 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getDonationArt('donationArt3Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getDonationArt('donationArt3Content')}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 4 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getDonationArt('donationArt4Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getDonationArt('donationArt4Content')}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 5 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getDonationArt('donationArt5Title')}
+                      </h4>
+                      <p className="leading-relaxed font-semibold italic text-slate-900 bg-amber-50/15 p-1.5 border border-amber-300/30 rounded-xs">
+                        {getDonationArt('donationArt5Content', { '[FEE]': formatMoney(loan.feeAmount) })}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 6 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getDonationArt('donationArt6Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getDonationArt('donationArt6Content')}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 7 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getDonationArt('donationArt7Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getDonationArt('donationArt7Content')}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* B2B / MIXED GENERAL COMPLIANT LAYOUT */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getB2BMixedArt('b2bMixedArt1Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getB2BMixedArt('b2bMixedArt1Content', { '[TOTAL]': formatMoney(totalRepayable), '[AMOUNT]': formatMoney(loan.amount) })}
+                      </p>
+                    </div>
+
+                    {/* PARAMETRIC TABLE */}
+                    <div className="py-1 my-1.5 border-y border-stone-200">
+                      <h5 className="font-extrabold text-center text-[#b31412] uppercase tracking-widest text-[8.5px] mb-1">
+                        • {t.paramTitle}
+                      </h5>
+                      <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-slate-800 font-medium pl-6">
+                        <div>
+                          <span className="text-slate-600">{t.paramLoan}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(loan.amount)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramTotal}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(totalRepayable)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramRate}</span> <strong className="text-blue-700 font-extrabold">{loan.interestRate}%</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramInstallment}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(installmentPayment)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramInterest}</span> <strong className="text-blue-700 font-extrabold">{formatMoney(totalInterest)}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-600">{t.paramDuration}</span> <strong className="text-blue-700 font-extrabold">{loan.durationMonths} mesi</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ARTICLE 2 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getB2BMixedArt('b2bMixedArt2Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getB2BMixedArt('b2bMixedArt2Content', { '[DURATION]': loan.durationMonths, '[INSTALLMENT]': formatMoney(installmentPayment) })}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 3 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getB2BMixedArt('b2bMixedArt3Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getB2BMixedArt('b2bMixedArt3Content')}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 4 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getB2BMixedArt('b2bMixedArt4Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getB2BMixedArt('b2bMixedArt4Content')}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 5 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getB2BMixedArt('b2bMixedArt5Title')}
+                      </h4>
+                      <p className="leading-relaxed font-semibold italic text-slate-900 bg-amber-50/15 p-1.5 border border-amber-300/30 rounded-xs">
+                        {getB2BMixedArt('b2bMixedArt5Content', { '[FEE]': formatMoney(loan.feeAmount) })}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 6 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getB2BMixedArt('b2bMixedArt6Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getB2BMixedArt('b2bMixedArt6Content', { '[RATE]': loan.penaltyRate, '[FEE_FIXED]': formatMoney(loan.penaltyFixedAmount) })}
+                      </p>
+                    </div>
+
+                    {/* ARTICLE 7 */}
+                    <div>
+                      <h4 className="font-extrabold text-[#b31412] uppercase tracking-wide mb-0.5 text-left border-b border-stone-200 pb-0.5">
+                        {getB2BMixedArt('b2bMixedArt7Title')}
+                      </h4>
+                      <p className="leading-relaxed text-slate-700">
+                        {getB2BMixedArt('b2bMixedArt7Content')}
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                {/* CLOSING REMARKS */}
+                <p className="leading-normal font-sans italic text-slate-500 mt-2">
+                  {customClosingRemarks}
+                </p>
+              </>
+            ) : (
+              renderSelectedDocContent()
+            )}
           </div>
 
           {/* 7. SECURE SIGNATURE CARD SEGMENTS - HIGH DEF SHIELD TO PREVENT OVERFLOW */}
@@ -1356,7 +2643,10 @@ export function ContractPreview({
                 className="flex flex-col justify-between min-h-[145px] relative border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50/5 cursor-pointer bg-slate-50/30 rounded-sm p-2 text-center h-full overflow-hidden shadow-2xs transition-all"
                 title="Cliquez ici pour signer numériquement"
               >
-                <span className="font-black text-slate-900 tracking-wider block uppercase text-[8.5px] border-b border-slate-200 pb-1 mb-1">{borrower.name.toUpperCase()}</span>
+                <div>
+                  <span className="font-[450] text-[#b31412] text-[7.5px] uppercase block leading-none mb-1">{customLabelBorrower}</span>
+                  <span className="font-black text-slate-900 tracking-wider block uppercase text-[8.5px] border-b border-slate-200 pb-1 mb-1">{borrower.name.toUpperCase()}</span>
+                </div>
                 
                 {/* Visual indicator of manual signature space */}
                 <div className="h-16 flex flex-col items-center justify-center relative bg-white/50 rounded-sm border border-dashed border-stone-200/60 my-1">
@@ -1381,6 +2671,8 @@ export function ContractPreview({
                     <div className="w-20 border-b border-dashed border-stone-300 absolute bottom-3"></div>
                   )}
                 </div>
+
+
               </div>
 
               {/* Middle Side Column: PRESTATORE / PRÊTEUR (CREDIVITE) */}
@@ -1389,7 +2681,10 @@ export function ContractPreview({
                 className="flex flex-col justify-between min-h-[145px] relative border border-slate-200 hover:border-blue-600 hover:bg-blue-50/5 cursor-pointer bg-blue-50/10 rounded-sm p-2 text-center h-full overflow-hidden shadow-2xs transition-all"
                 title="Cliquez ici pour signer"
               >
-                <span className="font-black text-blue-900 tracking-wider block uppercase text-[8.5px] border-b border-slate-200 pb-1 mb-1">{lender.name.toUpperCase()}</span>
+                <div>
+                  <span className="font-[450] text-blue-800 text-[7.5px] uppercase block leading-none mb-1">{customLabelLender}</span>
+                  <span className="font-black text-blue-900 tracking-wider block uppercase text-[8.5px] border-b border-slate-200 pb-1 mb-1">{lender.name.toUpperCase()}</span>
+                </div>
                 
                 {/* Beautiful dynamic cursive signature of the Prestatore overlapping with the company stamp */}
                 <div className="h-16 w-full flex items-center justify-center relative">
@@ -1425,22 +2720,24 @@ export function ContractPreview({
                       <path id="lender-stamp-text-upper" d="M 16,50 A 34,34 0 1,1 84,50" fill="none" />
                       <text fontSize="5.2" fontWeight="bold" fill="currentColor">
                         <textPath href="#lender-stamp-text-upper" startOffset="50%" textAnchor="middle">
-                          ★ CREDIVITE S.A. ★
+                          ★ {isDonation ? (lender.name.substring(0, 14).toUpperCase() || "DONATEUR") : isB2B ? (lender.name.substring(0, 14).toUpperCase() || "SOCIETE") : "CREDIVITE S.A."} ★
                         </textPath>
                       </text>
                       
                       <path id="lender-stamp-text-lower" d="M 84,50 A 34,34 0 1,1 16,50" fill="none" />
                       <text fontSize="4.5" fontWeight="bold" fill="currentColor">
                         <textPath href="#lender-stamp-text-lower" startOffset="50%" textAnchor="middle">
-                          {languageCode === 'FR' ? "CONTRÔLE ADMINISTRATIF" : languageCode === 'IT' ? "CONTROLLO AMMINISTRATIVO" : "DIRECTORATE SECURED LOAN"}
+                          {isDonation ? (languageCode === 'FR' ? "DONATION ENREGISTRÉE" : languageCode === 'IT' ? "DONAZIONE REGISTRATA" : "SECURED DONATION DEED") : (languageCode === 'FR' ? "CONTRÔLE ADMINISTRATIF" : languageCode === 'IT' ? "CONTROLLO AMMINISTRATIVO" : "DIRECTORATE SECURED LOAN")}
                         </textPath>
                       </text>
                       
                       <text x="50" y="47" fontSize="4.2" textAnchor="middle" fill="currentColor">{languageCode === 'FR' ? "OFFICIEL" : languageCode === 'IT' ? "UFFICIALE" : "OFFICIAL"}</text>
-                      <text x="50" y="58" fontSize="5.2" fontWeight="black" textAnchor="middle" fill="currentColor">{languageCode === 'FR' ? "AGRÉÉ" : languageCode === 'IT' ? "APPROVATO" : "APPROVED"}</text>
+                      <text x="50" y="58" fontSize="5.2" fontWeight="black" textAnchor="middle" fill="currentColor">{isDonation ? (languageCode === 'FR' ? "DONNÉ" : languageCode === 'IT' ? "DONATO" : "GIFTED") : (languageCode === 'FR' ? "AGRÉÉ" : languageCode === 'IT' ? "APPROVATO" : "APPROVED")}</text>
                     </svg>
                   </div>
                 </div>
+
+
               </div>
 
               {/* Right Side Column: NOTAIO / NOTAIRE (RED STAMP & CERTIFICATION) */}

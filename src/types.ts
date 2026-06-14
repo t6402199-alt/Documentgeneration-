@@ -66,3 +66,23 @@ export interface ArticleContent {
   contentFR: string;
   contentIT: string;
 }
+
+export type ContractType = 'personal_loan' | 'business_loan' | 'party_business_loan' | 'donation';
+
+export type DocumentViewType =
+  | 'main_contract'
+  | 'loan_offer'
+  | 'amortization_schedule'
+  | 'borrower_insurance'
+  | 'sepa_mandate'
+  | 'guarantor_agreement'
+  | 'mortgage_deed'
+  | 'pledge_agreement'
+  | 'debt_acknowledgment'
+  | 'fees_agreement'
+  | 'general_credit_terms'
+  | 'loan_addendum'
+  | 'notary_registration'
+  | 'tva_tax_statement';
+
+

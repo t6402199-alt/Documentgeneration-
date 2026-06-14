@@ -4,9 +4,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { PartyDetails, LoanDetails, StylingDetails } from './types';
+import { PartyDetails, LoanDetails, StylingDetails, ContractType, DocumentViewType } from './types';
 import { SignaturePad } from './components/SignaturePad';
 import { ContractPreview } from './components/ContractPreview';
+import { tWordFallback } from './components/wordTranslationsFallback';
 import { 
   Building,
   User,
@@ -52,6 +53,12 @@ const baseTemplateForTranslation = {
   preambleClause2: "Considérant que le prêteur accepte de lui octroyer ce prêt pour la réalisation de son projet socio-humanitaire ou d'investissement personnel confidentiel.",
   preambleClause3: "Considérant que l'emprunteur s'engage solennellement devant la justice civile à rembourser ce prêt conformément aux conditions stipulées et de bonne foi,",
   partiesAgree: "LES PARTIES CONVIENNENT DE CE QUI SUIT :",
+  closingRemarks: "Dans le cas où les retards seraient dument justifiés par l'emprunteur, l'autorité financière compétente ou le tribunal civil décidera d'un commun accord.",
+  labelBorrower: "L'EMPRUNTEUR (DÉBITEUR)",
+  labelLender: "LE PRÊTEUR (CRÉANCIER)",
+  labelNotary: "LE NOTAIRE (OFFICIER CIVIL)",
+
+  // Personal Loan Articles
   art1Title: "1. OBLIGATION DE REMBOURSEMENT UNIQUE",
   art1Content: "L'emprunteur s'engage à rembourser, sans préjudice, un montant total de [TOTAL] sur l'échéance contractuelle de [DURATION] mois. Les opérations de versement démarreront sous un délai de carence maximum de 90 jours (3 mois) après réception des fonds sur son compte bancaire.",
   paramTitle: "CALCUL CONSOLIDE DU DISPOSITIF DE PRÊT",
@@ -73,10 +80,93 @@ const baseTemplateForTranslation = {
   art6Content: "Tout manquement répété ou non-respect de l'acte sans justification légale validée par l'autorité compétente entraînera des poursuites directes ainsi que la révocation immédiate des délais de paiement consentis d'office.",
   art7Title: "7. JURIDICTION ET DROIT DE COMPENSAZIONE",
   art7Content: "Après trois échéances impayées et sans justification appropriée validée, l'acte devient dument exécutoire et le prêteur obtiendra la compensation totale ou partielle par l'assureur crédit agréé à la hauteur des montants en souffrance.",
-  closingRemarks: "Dans le cas où les retards seraient dument justifiés par l'emprunteur, l'autorité financière compétente ou le tribunal civil décidera d'un commun accord.",
-  labelBorrower: "L'EMPRUNTEUR (DÉBITEUR)",
-  labelLender: "LE PRÊTEUR (CRÉANCIER)",
-  labelNotary: "LE NOTAIRE (OFFICIER CIVIL)",
+
+  // B2B specific template fields
+  b2bContractTitle: "CONTRAT DE PRÊT COMMERCIAL (B2B)",
+  b2bIntroText: "Le présent accord de trésorerie professionnelle prend effet le [DATE_SIGNED], convenu d'un commun accord entre :",
+  b2bLenderRole: "La Société [NAME] (CRÉANCIER / PRÊTEUR PROFESSIONNEL), ayant son siège social à [ADDRESS].",
+  b2bBorrowerRole: "Et la Société [NAME] (EMPRUNTEUR CORPORATIF), sise à [ADDRESS].",
+  b2bPreambleTitle: "EXPOSÉ DES MOTIFS (PRÉAMBULE)",
+  b2bPreambleClause1: "Considérant que l'Emprunteur Corporatif a sollicité auprès du Prêteur un financement professionnel de [AMOUNT] d'une durée de [DURATION] mois.",
+  b2bPreambleClause2: "Considérant que le Prêteur consent à allouer ces fonds pour les besoins de trésorerie et d'activité de l'entité emprunteuse.",
+  b2bPreambleClause3: "Le présent contrat est régi sous l'empire des règles commerciales européennes relatives aux transactions entre sociétés.",
+  b2bPartiesAgree: "LES PARTIES DÉCIDENT D'ARRÊTER LES CONVENTIONS SUIVANTES :",
+  b2bClosingRemarks: "Fait en trois exemplaires originaux, dument répertoriés aux registres de trésorerie.",
+  b2bLabelLender: "LE PRÊTEUR (CRÉANCIER CORPORATIF)",
+  b2bLabelBorrower: "L'EMPRUNTEUR (ENTREPRISE DÉBITRICE)",
+
+  // Mixed specific template fields
+  mixedContractTitle: "CONTRAT DE PRÊT MIXTE (ENTREPRISE - PARTICULIER)",
+  mixedIntroText: "Le présent acte d'arrangement civil financier prend effet en date du [DATE_SIGNED], entre :",
+  mixedLenderRole: "La Société [NAME] (ENTREPRISE PRÊTEUSE), sise au [ADDRESS].",
+  mixedBorrowerRole: "Et M. / Mme [NAME] (EMPRUNTEUR PARTICULIER), demeurant au [ADDRESS].",
+  mixedPreambleTitle: "PRÉAMBULE ADMINISTRATIF",
+  mixedPreambleClause1: "Considérant que l'emprunteur particulier sollicite une mise à disposition d'une somme de [AMOUNT] d'une durée de [DURATION] mois auprès d'une entreprise prêteuse.",
+  mixedPreambleClause2: "Considérant que la société prêteuse décide de consentir à cette demande de financement pour accompagner le projet personnel ou d'investissement du particulier.",
+  mixedPreambleClause3: "Le présent acte est répertorié dument au greffe pour la traçabilité des opérations de prêt mixte.",
+  mixedPartiesAgree: "IL A ÉTÉ ARRÊTÉ ET CONVENU CE QUI SUIT :",
+  mixedLabelLender: "LE PRÊTEUR (SOCIÉTÉ PRÊTEUSE)",
+  mixedLabelBorrower: "L'EMPRUNTEUR (PARTICULIER EMPRUNTEUR)",
+
+  // B2B & Mixed common articles
+  b2bMixedArt1Title: "Article 1 : Objet du financement et destination réglementée des fonds",
+  b2bMixedArt1Content: "Le Prêteur consent à mettre à disposition de l'Emprunteur l'enveloppe consolidée de [TOTAL] (comprenant le principal exigible de [AMOUNT] et les coûts afférents).",
+  b2bMixedArt2Title: "Article 2 : Calendrier d'amortissement et échéances",
+  b2bMixedArt2Content: "L'amortissement de la dette s'établira sur la base de [DURATION] échéances récurrentes de [INSTALLMENT] chacune, de manière consécutive.",
+  b2bMixedArt3Title: "Article 3 : Droit souverain de remboursement anticipé sans frais",
+  b2bMixedArt3Content: "L'Emprunteur conserve expressément la faculté discrétionnaire de solder sa dette par anticipation, sans frais ou pénalités d'office.",
+  b2bMixedArt4Title: "Article 4 : Responsabilité solidaire et déclaration de solvabilité",
+  b2bMixedArt4Content: "Le signataire et ses délégations d'affaires engagent solidairement l'ensemble des avoirs de la structure emprunteuse.",
+  b2bMixedArt5Title: "Article 5 : Frais d'homologation d'acte et constitution de garantie",
+  b2bMixedArt5Content: "Pour valider l'acte, les frais obligatoires de constitution d'assurance et d'homologation de [FEE] devront être soldés par l'emprunteur.",
+  b2bMixedArt6Title: "Article 6 : Pénalités moratoires et déchéance immédiate du terme",
+  b2bMixedArt6Content: "Tout retard persistant de plus de cinq jours francs autorisera une majoration de [RATE]% mensuel assortie d'une astreinte de [FEE_FIXED].",
+  b2bMixedArt7Title: "Article 7 : Droit européen régisseur et attribution de juridiction",
+  b2bMixedArt7Content: "Le règlement du contrat se réfère au cadre réglementaire des affaires européennes. Tout conflit sera du ressort exclusif du Tribunal de Commerce.",
+
+  // Donation specific template fields
+  donationContractTitle: "CONVENTION D'ACTE DE DONATION DE SÉCURITÉ FISCALE",
+  donationIntroText: "La présente convention d'acte authentique à titre gratuit est signée le [DATE_SIGNED], entre :",
+  donationLenderRole: "M. / Mme / Entité [NAME] (DONATEUR / BIENFAITEUR), résidant à [ADDRESS].",
+  donationBorrowerRole: "Et M. / Mme [NAME] (DONATAIRE / BÉNÉFICIAIRE), demeurant à [ADDRESS].",
+  donationPreambleTitle: "EXPOSÉ D'INTENTION LIBÉRALE",
+  donationPreambleClause1: "Considérant l'intention libérale et l'esprit d'affection qui déterminent le Donateur à céder de manière définitive et irrévocable la somme de [AMOUNT].",
+  donationPreambleClause2: "Considérant que le Donataire accepte expressément cette donation manuelle avec une gratitude et une reconnaissance absolues.",
+  donationPreambleClause3: "Cet acte est homologué sous sceau pour préserver les droits successoraux et l'enregistrement de sécurité fiscale des donations.",
+  donationPartiesAgree: "LES PARTIES CONVIENNENT DE CE QUI SUIT :",
+  donationClosingRemarks: "Fait en trois exemplaires originaux, dument répertoriés aux registres de trésorerie.",
+  donationLabelLender: "LE DONATEUR (BIENFAITEUR)",
+  donationLabelBorrower: "LE DONATAIRE (BÉNÉFICIAIRE)",
+  donationHandwriteTextLender: '"Bon pour donation irrévocable à titre gratuit"',
+  donationHandwriteTextBorrower: '"Lu et accepté avec gratitude, bon dresseur d\'office"',
+
+  // Donation Articles
+  donationArt1Title: "Article 1 : Constat de libéralité de fonds à titre gratuit",
+  donationArt1Content: "Le Donateur transfère définitivement et sans réserve la somme de [AMOUNT] au Donataire, qui l'accepte.",
+  donationSummaryTitle: "FICHE DE LIQUIDATION DE DONATION",
+  donationLabelAmount: "Valeur Totale Donnée :",
+  donationLabelRepayment: "Nature de remboursement :",
+  donationValueRepayment: "EXEMPTÉ (A TITRE GRATUIT)",
+  donationLabelInterest: "Taux d'intérêt conventionnel :",
+  donationValueInterest: "Non applicable",
+  donationLabelFee: "Droits d'homologation administrative :",
+  donationLabelFrequency: "Fréquence d'acte :",
+  donationValueFrequency: "Donazione manuale unica",
+  donationLabelDeedStatus: "Garantie de Sécurité Fiscale :",
+  donationValueDeedStatus: "DON MANUEL TRANSMIS HORS TAXATION",
+  donationArt2Title: "Article 2 : Acceptation expresse du Donataire",
+  donationArt2Content: "Le Donataire certifie sa pleine et entière acceptation de cette libéralité de grand cœur et témoigne de sa vive gratitude.",
+  donationArt3Title: "Article 3 : Caractère irrévocable du transfert physique",
+  donationArt3Content: "Le Donateur déclare et confirme que ce transfert s'effectue de manière absolue, irrévocable et définitive.",
+  donationArt4Title: "Article 4 : Fiscalité et dispenses d'obligations d'héritage",
+  donationArt4Content: "Cet acte civil dispense définitivement le Donataire de toute restitution directe ou indirecte lors des successions familiales.",
+  donationArt5Title: "Article 5 : Frais d'homologation de sécurité administrative",
+  donationArt5Content: "Pour l'opposabilité de plein droit de cet acte, les frais de sécurité d'enregistrement de [FEE] sont fixés.",
+  donationArt6Title: "Article 6 : Attestation de capacité civile et libre arbitre",
+  donationArt6Content: "Les parties comparaissantes attestent sur l'honneur posséder leur pleine capacité civile et agir de leur libre arbitre physique.",
+  donationArt7Title: "Article 7 : Opposabilité juridique et enregistrement d'État",
+  donationArt7Content: "La présente donation est soumise à la compétence exclusive des tribunaux du siège de l'autorité émettrice.",
+
   handwriteLabel: "Écrire obligatoirement de sa main :",
   handwriteTextBorrower: '"Lu et approuvé d\'office, bon pour accord"',
   handwriteTextLender: '"Bon pour accord, crédit débloqué d\'office"',
@@ -246,6 +336,8 @@ export default function App() {
   });
 
   // UI States
+  const [contractType, setContractType] = useState<ContractType>('personal_loan');
+  const [selectedDoc, setSelectedDoc] = useState<DocumentViewType>('main_contract');
   const [isGenerated, setIsGenerated] = useState<boolean>(false);
   const [exportMode, setExportMode] = useState<'editable' | 'official'>('official');
   const [wizardStep, setWizardStep] = useState<number>(1);
@@ -340,8 +432,38 @@ export default function App() {
       }
     } catch (error: any) {
       console.error(error);
-      setTranslationError(error.message || String(error));
-      setBannerAlert(`Erreur de traduction IA : ${error.message || String(error)}`);
+      const errMsg = error.message || String(error);
+      const norm = targetLang.toLowerCase();
+      let matchedCode: 'ES' | 'DE' | 'PT' | 'NL' | 'PL' | 'RO' | 'EN' | 'IT' | 'FR' | null = null;
+      if (norm.includes('esp') || norm.includes('span') || norm === 'es') matchedCode = 'ES';
+      else if (norm.includes('all') || norm.includes('germ') || norm.includes('deutsch') || norm === 'de') matchedCode = 'DE';
+      else if (norm.includes('port') || norm === 'pt') matchedCode = 'PT';
+      else if (norm.includes('nee') || norm.includes('dutch') || norm.includes('hol') || norm === 'nl') matchedCode = 'NL';
+      else if (norm.includes('pol') || norm === 'pl') matchedCode = 'PL';
+      else if (norm.includes('rou') || norm.includes('rom') || norm.includes('rum') || norm === 'ro') matchedCode = 'RO';
+      else if (norm.includes('it') || norm.includes('ita')) matchedCode = 'IT';
+      else if (norm.includes('ang') || norm.includes('eng') || norm === 'en') matchedCode = 'EN';
+      else if (norm.includes('fr') || norm.includes('fra')) matchedCode = 'FR';
+
+      if (matchedCode) {
+        setStyling(prev => ({
+          ...prev,
+          language: matchedCode as any,
+          customLanguageLabel: targetLang,
+          customTranslations: null,
+          customTranslationsWord: null
+        }));
+        setBannerAlert(`Échec Traduction IA (Détail: ${errMsg}). Votre contrat a été traduit en "${targetLang}" à l'aide de la traduction certifiée de secours.`);
+      } else {
+        setStyling(prev => ({
+          ...prev,
+          language: 'EN',
+          customLanguageLabel: targetLang,
+          customTranslations: null,
+          customTranslationsWord: null
+        }));
+        setBannerAlert(`Échec Traduction IA (Détail: ${errMsg}). Le contrat certifié par défaut en Anglais a été chargé pour "${targetLang}".`);
+      }
     } finally {
       setIsTranslating(false);
     }
@@ -353,16 +475,28 @@ export default function App() {
       return;
     }
     
-    // Check if it's one of the standard translation catalogs of ContractPreview (FR, EN, IT)
-    if (['FR', 'EN', 'IT', 'BOTH'].includes(lang)) {
+    // Check if it's one of the standard translation catalogs
+    if (['FR', 'EN', 'IT', 'ES', 'DE', 'PT', 'NL', 'PL', 'RO', 'BOTH'].includes(lang)) {
       setStyling(prev => ({ ...prev, language: lang }));
       setCustomTranslations(null);
       setCustomTranslationsWord(null);
       setTranslatedLangCode('');
-      setBannerAlert(`Langue sélectionnée : ${lang === 'FR' ? "Français" : lang === 'IT' ? "Italien" : "Anglais"}.`);
+      
+      const langMapping: { [key: string]: string } = {
+        'FR': 'Français',
+        'IT': 'Italien',
+        'EN': 'Anglais',
+        'ES': 'Espagnol',
+        'DE': 'Allemand',
+        'PT': 'Portugais',
+        'NL': 'Néerlandais',
+        'PL': 'Polonais',
+        'RO': 'Roumain',
+        'BOTH': 'Bilingue'
+      };
+      setBannerAlert(`Langue sélectionnée : ${langMapping[lang] || lang}.`);
     } else {
-      // It's a standard language but only supported in Preview, not Word. (ES, DE, PT, NL, PL, RO)
-      // Let's automatically translate the Word catalog using Gemini so the export is perfectly in the selected language!
+      // It's a custom-selected language
       const langMapping: { [key: string]: string } = {
         'ES': 'Espagnol',
         'DE': 'Allemand',
@@ -488,6 +622,92 @@ export default function App() {
 
   // EXPORT WORD DOCUMENT .DOC OR HYPER-COMPATIBLE EDITABLE HTML
   const triggerDownloadContract = (format: 'doc' | 'html' = 'html') => {
+    const sheetElement = document.getElementById('printed-contract-sheet');
+    if (!sheetElement) {
+      setBannerAlert("Erreur de récupération de l'élément de rendu contractuel.");
+      return;
+    }
+
+    // Get the exact parsed inner HTML from the paper on screen
+    const sheetContent = sheetElement.innerHTML;
+
+    // Build the standalone document matching the preview styles exactly
+    const finalHtml = `<!DOCTYPE html>
+<html lang="${styling.language === 'BOTH' ? 'fr' : styling.language === 'CUSTOM' ? 'fr' : styling.language.toLowerCase()}">
+<head>
+  <meta charset="utf-8">
+  <title>${selectedDoc === 'main_contract' ? 'Acte Authentique d\'Origine' : 'Acte Administratif - Conforme CE'}</title>
+  
+  <!-- Tailwind CSS CDN to dynamically parse all styled templates -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Official high contrast administrative typography scales -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: inherit;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    
+    [contenteditable="true"]:focus {
+      outline: 2px dashed #f59e0b;
+      background-color: rgba(245, 158, 11, 0.05);
+      border-radius: 4px;
+    }
+    
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body ${format === 'html' && exportMode === 'editable' ? 'contenteditable="true"' : ''} style="background-color: ${format === 'html' ? '#f1f5f9' : '#ffffff'}; padding: 40px 10px; display: flex; justify-content: center; min-height: 100vh;">
+  <div class="w-full max-w-[800px] bg-white text-slate-900 duration-300 relative overflow-hidden" style="padding: 30px; box-shadow: ${format === 'html' ? '0 25px 50px -12px rgb(0 0 0 / 0.15)' : 'none'}; border: 1px solid #e2e8f0; border-radius: 4px;">
+    ${sheetContent}
+  </div>
+</body>
+</html>`;
+
+    const fileContent = '\ufeff' + finalHtml;
+    const blobType = format === 'html' ? 'text/html;charset=utf-8' : 'application/msword;charset=utf-8';
+    const blob = new Blob([fileContent], { type: blobType });
+    const url = URL.createObjectURL(blob);
+    
+    const tmpAnchor = document.createElement('a');
+    tmpAnchor.href = url;
+
+    // Name elements
+    const docLabel = selectedDoc.toLowerCase();
+    const typeLabel = contractType.toLowerCase();
+    const langLabel = (styling.customLanguageLabel || styling.language).toLowerCase();
+    const modeLabel = exportMode === 'editable' ? 'modifiable' : 'officiel';
+    const cleanLender = lender.name.replace(/\s+/g, '_');
+    const cleanBorrower = borrower.name.replace(/\s+/g, '_');
+
+    tmpAnchor.download = `acte_${docLabel}_${typeLabel}_${langLabel}_${modeLabel}_${cleanLender}_vs_${cleanBorrower}.${format}`;
+    
+    document.body.appendChild(tmpAnchor);
+    tmpAnchor.click();
+    document.body.removeChild(tmpAnchor);
+
+    // Provide feedback output
+    const formatName = format === 'html' ? 'HTML Mobile & PC' : 'Word (.doc)';
+    const feedback = `Acte au format ${formatName} exporté avec succès ! Document : ${docLabel.toUpperCase()} - Contexte : ${typeLabel.toUpperCase()} (${langLabel.toUpperCase()})`;
+    setBannerAlert(feedback);
+    return;
+  };
+
+  const old_triggerDownloadContract_will_be_ignored = (format: 'doc' | 'html' = 'html') => {
     const principal = loan.amount;
     const rate = loan.interestRate;
     const duration = loan.durationMonths;
@@ -701,6 +921,56 @@ export default function App() {
       if (styling.language === 'BOTH') {
         return tWord.FR;
       }
+      if (['ES', 'DE', 'PT', 'NL', 'PL', 'RO'].includes(styling.language)) {
+        const raw = tWordFallback[styling.language];
+        return {
+          ...raw,
+          procedureBody: (raw.procedureBody || "")
+            .replace("[NOTARY_NAME]", `<strong>${notary.name}</strong>`)
+            .replace("[NOTARY_ADDRESS]", `<strong>${notary.address}</strong>`)
+            .replace("[NOTARY_LICENSE]", `<strong>N° ${loan.notaryLicense || notary.idNumber}</strong>`),
+          incomeValue: (raw.incomeValue || "")
+            .replace("[MONTHLY_INCOME]", borrower.monthlyIncome ? borrower.monthlyIncome.toLocaleString() : 'N/C')
+            .replace("[CURRENCY]", loan.currency),
+          sec21Body: (raw.sec21Body || "")
+            .replace("[PRINCIPAL]", `<strong>${formatM(principal)}</strong>`)
+            .replace("[FUND_PURPOSE]", `<strong>${loan.fundPurpose}</strong>`),
+          sec22Body: (raw.sec22Body || "")
+            .replace("[RATE]", `<strong>${rate}%</strong>`)
+            .replace("[DURATION]", `<strong>${duration} mois</strong>`)
+            .replace("[TOTAL_INTEREST]", `<strong>${formatM(totalInterest)}</strong>`),
+          sec23Body_start: (raw.sec23Body_start || "")
+            .replace("[TOTAL_REPAYABLE]", `<strong>${formatM(totalRepayable)}</strong>`)
+            .replace("[REPAYMENT_FREQUENCY]", `<strong>${loan.repaymentFrequency.toUpperCase()}</strong>`),
+          sec23Body_mensuel: (raw.sec23Body_mensuel || "")
+            .replace("[DURATION]", String(duration))
+            .replace("[INSTALLMENT_PAYMENT]", `<strong>${formatM(installmentPayment)}</strong>`),
+          sec23Body_trimestriel: (raw.sec23Body_trimestriel || "")
+            .replace("[INSTALLMENT_PAYMENT]", `<strong>${formatM(installmentPayment)}</strong>`),
+          sec23Body_unique: (raw.sec23Body_unique || ""),
+          sec23Body_dates: (raw.sec23Body_dates || "")
+            .replace("[FIRST_REPAYMENT_DATE]", `<strong>${firstDateFormatted}</strong>`)
+            .replace("[FINAL_REPAYMENT_DATE]", `<strong>${finalDateFormatted}</strong>`),
+          penaltyFixed: (raw.penaltyFixed || "")
+            .replace("[PENALTY_FIXED_AMOUNT]", `<strong>${formatM(loan.penaltyFixedAmount)}</strong>`),
+          penaltyRate: (raw.penaltyRate || "")
+            .replace("[PENALTY_RATE]", `<strong>${loan.penaltyRate}</strong>`),
+          section4Body: (raw.section4Body || "")
+            .replace("[FEE_AMOUNT]", `<strong>${formatM(loan.feeAmount)}</strong>`)
+            .replace("[TVA_RATE]", `<strong>${loan.tvaRate}</strong>`)
+            .replace("[TVA_AMOUNT]", `<strong>${formatM(tvaAmount)}</strong>`)
+            .replace("[TOTAL_WITH_TAXES]", `<strong>${formatM(totalWithTaxes)}</strong>`),
+          labelDone: (raw.labelDone || "")
+            .replace("[CITY]", loan.city)
+            .replace("[COUNTRY]", loan.country)
+            .replace("[SIGNATURE_DATE]", signatureDateFormatted),
+          stampNotarySig: (raw.stampNotarySig || "")
+            .replace("[NOTARY_NAME]", notary.name),
+          section5Body: (raw.section5Body || "")
+            .replace("[FEE_AMOUNT]", `<strong>${formatM(loan.feeAmount)}</strong>`)
+            .replace("[PRINCIPAL]", `<strong>${formatM(principal)}</strong>`)
+        };
+      }
       // If we have custom translations loaded in customTranslationsWord
       if (customTranslationsWord) {
         const raw = customTranslationsWord;
@@ -756,6 +1026,33 @@ export default function App() {
       // Failover to French if custom not loaded yet
       return tWord.FR;
     })();
+
+    // Dynamic adaptations for B2B, mixed, and donation contracts
+    const isDonation = contractType === 'donation';
+    const isB2B = contractType === 'business_loan';
+    const isMixed = contractType === 'party_business_loan';
+
+    let customExportTitle = currentT.titleBox;
+    let customExportLenderRole = currentT.labelLender;
+    let customExportBorrowerRole = currentT.labelBorrower;
+    let customExportHandwriteLender = currentT.docLenderMention || 'Must handwrite: "Approved for agreement, loan released officially"';
+    let customExportHandwriteBorrower = currentT.docBorrowerMention || 'Must handwrite: "Read and approved, good for agreement"';
+
+    if (isB2B) {
+      customExportTitle = activeLang === 'FR' ? "CONTRAT DE PRÊT COMMERCIAL (B2B)" : activeLang === 'IT' ? "CONTRATTO DI PRESTITO COMMERCIALE (B2B)" : "B2B COMMERCIAL LOAN AGREEMENT";
+      customExportLenderRole = activeLang === 'FR' ? "LE PRÊTEUR (CRÉANCIER CORPORATIF)" : activeLang === 'IT' ? "IL MUTUANTE (FINANZIATORE CORP)" : "THE LENDER (CORPORATE CREDITOR)";
+      customExportBorrowerRole = activeLang === 'FR' ? "L'EMPRUNTEUR (ENTREPRISE DÉBITRICE)" : activeLang === 'IT' ? "IL MUTUATARIO (IMPRESA DEBITRICE)" : "THE BORROWER (CORPORATE DEBTOR)";
+    } else if (isMixed) {
+      customExportTitle = activeLang === 'FR' ? "CONTRAT DE PRÊT MIXTE (ENTREPRISE - PARTICULIER)" : activeLang === 'IT' ? "CONTRATTO DI PRESTITO MISTO (AZIENDA-PRIVATO)" : "MIXED LOAN AGREEMENT (BUSINESS-PRIVATE)";
+      customExportLenderRole = activeLang === 'FR' ? "LE PRÊTEUR (SOCIÉTÉ PRÊTEUSE)" : activeLang === 'IT' ? "IL MUTUANTE (IMPRESA CREDITOR)" : "THE LENDER (CORPORATE CREDITOR)";
+      customExportBorrowerRole = activeLang === 'FR' ? "L'EMPRUNTEUR (PARTICULIER EMPRUNTEUR)" : activeLang === 'IT' ? "IL MUTUATARIO (PRIVATO DEBITORE)" : "THE BORROWER (PRIVATE DEBTOR)";
+    } else if (isDonation) {
+      customExportTitle = activeLang === 'FR' ? "CONVENTION D'ACTE DE DONATION DE SÉCURITÉ FISCALE" : activeLang === 'IT' ? "ATTO DI DONAZIONE DI SICUREZZA FISCALE" : "TAX-SECURE DEED OF DONATION";
+      customExportLenderRole = activeLang === 'FR' ? "LE DONATEUR (BIENFAITEUR)" : activeLang === 'IT' ? "IL DONATORE (BENEFATTORE)" : "THE DONOR (BENEFACTOR)";
+      customExportBorrowerRole = activeLang === 'FR' ? "LE DONATAIRE (BÉNÉFICIAIRE)" : activeLang === 'IT' ? "IL DONATARIO (DONEE)" : "THE DONEE (BENEFICIARY)";
+      customExportHandwriteLender = activeLang === 'FR' ? '"Bon pour donation irrévocable à titre gratuit"' : activeLang === 'IT' ? '"In fede di donazione irrevocabile a titolo gratuito"' : '"Approved for voluntary irrevocable gift"';
+      customExportHandwriteBorrower = activeLang === 'FR' ? '"Lu et accepté avec gratitude"' : activeLang === 'IT' ? '"Letto e accettato con gratitudine"' : '"Accepted with appreciation, bound by terms"';
+    }
 
     // High fidelity DOC structure matching the administrative layout
     const fileHtml = `
@@ -960,7 +1257,7 @@ export default function App() {
 
         <div class="title-box">
           <h2 style="margin: 0; font-size: 15pt; color: #1a365d; letter-spacing: 1.5px; text-transform: uppercase;">
-            ${currentT.titleBox}
+            ${customExportTitle}
           </h2>
         </div>
 
@@ -994,47 +1291,123 @@ export default function App() {
           </tr>
         </table>
 
-        <div class="section-title">${currentT.section2Title}</div>
-        
-        <div class="article-title">${currentT.sec21Title}</div>
-        <div class="article-content">
-          ${currentT.sec21Body}
-        </div>
-
-        <div class="article-title">${currentT.sec22Title}</div>
-        <div class="article-content">
-          ${currentT.sec22Body}
-        </div>
-
-        <div class="article-title">${currentT.sec23Title}</div>
-        <div class="article-content">
-          ${currentT.sec23Body_start} 
-          ${loan.repaymentFrequency === 'mensuel' ? currentT.sec23Body_mensuel : ''}
-          ${loan.repaymentFrequency === 'trimestriel' ? currentT.sec23Body_trimestriel : ''}
-          ${loan.repaymentFrequency === 'unique' ? currentT.sec23Body_unique : ''}
-          ${currentT.sec23Body_dates}
-        </div>
-
-        <div class="section-title">${currentT.section5Title}</div>
-        <div class="article-content">
-          ${currentT.section5Body}
-        </div>
-
-        <div class="section-title">${currentT.section3Title}</div>
-        <div class="article-content">
-          ${currentT.section3Body}
-          <div class="penalty-box">
-            <strong>${currentT.penaltyBoxHeader}</strong><br>
-            ${currentT.penaltyFixed}<br>
-            ${currentT.penaltyRate}
+        ${contractType === 'personal_loan' ? `
+          <div class="section-title">${currentT.section2Title}</div>
+          
+          <div class="article-title">${currentT.sec21Title}</div>
+          <div class="article-content">
+            ${currentT.sec21Body}
           </div>
-          ${currentT.penaltyWarning}
-        </div>
 
-        <div class="section-title">${currentT.section4Title}</div>
-        <div class="article-content">
-          ${currentT.section4Body}
-        </div>
+          <div class="article-title">${currentT.sec22Title}</div>
+          <div class="article-content">
+            ${currentT.sec22Body}
+          </div>
+
+          <div class="article-title">${currentT.sec23Title}</div>
+          <div class="article-content">
+            ${currentT.sec23Body_start} 
+            ${loan.repaymentFrequency === 'mensuel' ? currentT.sec23Body_mensuel : ''}
+            ${loan.repaymentFrequency === 'trimestriel' ? currentT.sec23Body_trimestriel : ''}
+            ${loan.repaymentFrequency === 'unique' ? currentT.sec23Body_unique : ''}
+            ${currentT.sec23Body_dates}
+          </div>
+
+          <div class="section-title">${currentT.section5Title}</div>
+          <div class="article-content">
+            ${currentT.section5Body}
+          </div>
+
+          <div class="section-title">${currentT.section3Title}</div>
+          <div class="article-content">
+            ${currentT.section3Body}
+            <div class="penalty-box">
+              <strong>${currentT.penaltyBoxHeader}</strong><br>
+              ${currentT.penaltyFixed}<br>
+              ${currentT.penaltyRate}
+            </div>
+            ${currentT.penaltyWarning}
+          </div>
+
+          <div class="section-title">${currentT.section4Title}</div>
+          <div class="article-content">
+            ${currentT.section4Body}
+          </div>
+        ` : isDonation ? `
+          <div class="section-title">${activeLang==='FR'? "DECLARATIONS DU TRANSFERT (DONATION MANUELLE)" : activeLang==='IT'? "DICHIARAZIONE DELLA CESSIONE (DONAZIONE)" : "DEED DETAILS AND CERTIFICATION"}</div>
+          
+          <div class="article-title">${activeLang==='FR'? 'Article 1 : Constat de libéralité de fonds à titre gratuit' : activeLang==='IT'? 'Articolo 1 : Constatazione di Donazione a Titolo Gratuito' : 'Article 1 : Statement of Gratuitous Donation'}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? `Le Donateur transfère définitivement et sans réserve la somme de <strong>${formatM(loan.amount)}</strong> au Donataire, qui l'accepte.` : activeLang==='IT'? `Il Donatore trasferisce definitivamente e senza alcuna riserva la somme di <strong>${formatM(loan.amount)}</strong> al Donatario, che l'accetta.` : `The Donor transfers definitely and without reservation the sum of <strong>${formatM(loan.amount)}</strong> to the Donee, who accepts it.`}
+          </div>
+
+          <div class="article-title">${activeLang==='FR'? "Article 2 : Acceptation expresse du Donataire" : activeLang==='IT'? "Articolo 2 : Accettazione espressa del Donatario" : "Article 2 : Explicit Acceptance by Donee"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? "Le Donataire certifie sa pleine et entière acceptation de cette libéralité de grand cœur et témoigne de sa vive gratitude." : activeLang==='IT'? "Il Donatario accetta la presente liberalità dichiarando che i fondi non provengono da operazioni illecite e ringrazia le Donatore." : "The Donee accepts this manual gift with highest appreciation, stating that these funds are legitimate."}
+          </div>
+
+          <div class="article-title">${activeLang==='FR'? "Article 3 : Caractère irrévocable du transfert physique" : activeLang==='IT'? "Articolo 3 : Irrevocabilità della cessione manuale" : "Article 3 : Irrevocability of Transfer"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? "Le Donateur déclare et confirme que ce transfert s'effectue de manière absolue, irrévocable et définitive." : activeLang==='IT'? "Questo atto costituisce un trasferimento definitivo e irrevocabile. Nessun successore potrà pretendere la revoca del dono." : "The current manual transfer is absolute, irreversible, and irrevocable under common civil law guidelines."}
+          </div>
+
+          <div class="article-title">${activeLang==='FR'? "Article 4 : Fiscalité et dispenses d'obligations d'héritage" : activeLang==='IT'? "Articolo 4 : Dichiarazione fiscale ordinaria" : "Article 4 : Tax Compliance and Filing"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? "Cet acte civil dispense définitivement le Donataire de toute restitution directe ou indirecte lors des successions familiales." : activeLang==='IT'? "Il beneficiario si impegna ad adempiere a qualsiasi obbligo di registrazione fiscale o dichiarazione locale obbligatoria." : "The Donee remains solely responsible for filing the appropriate tax declarations with administrative authorities."}
+          </div>
+
+          <div class="section-title">${activeLang==='FR'? "Homologation et Frais Administratifs" : activeLang==='IT'? "Omologazione e Spese Accessorie" : "Certification and Filing Charges"}</div>
+          <div class="article-content" style="font-weight: bold; background-color: #fafbfa; padding: 12px; border-left: 3px solid #059669;">
+            ${activeLang==='FR'? `Pour l'opposabilité de plein droit de cet acte, les frais de sécurité d'enregistrement de <strong>${formatM(loan.feeAmount)}</strong> sont fixés.` : activeLang==='IT'? `Per la validità opponibile ai terzi, i diritti di dossier pari a <strong>${formatM(loan.feeAmount)}</strong> sono incassati dall'étude.` : `To establish official records, the registration and notary service fee of <strong>${formatM(loan.feeAmount)}</strong> is fully authorized.`}
+          </div>
+
+          <div class="article-title">${activeLang==='FR'? "Article 5 : Attestation de capacité civile et libre arbitre" : activeLang==='IT'? "Articolo 5 : Capacità civile delle parti" : "Article 5 : Civil Capacity and Free Will"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? "Les parties comparaissantes attestent sur l'honneur posséder leur pleine capacité civile et agir de leur libre arbitre physique." : activeLang==='IT'? "Entrambe le parti dichiarano di trovarsi in piene facoltà mentali, libere da qualsiasi costrizione externa." : "Both the Donor and Donee certify they are of sound mind and acting entirely of their own free will without any duress."}
+          </div>
+
+          <div class="article-title">${activeLang==='FR'? "Article 6 : Opposabilité juridique et enregistrement d'État" : activeLang==='IT'? "Articolo 6 : Giurisdizione e Legge Applicabile" : "Article 6 : Applicable Jurisdiction"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? "La présente donation est soumise à la compétence exclusive des tribunaux du siège de l'autorité émettrice." : activeLang==='IT'? "Qualsiasi controversia relativa all'interpretazione del presente atto è deferita alla giurisdizione del foro civile territorialmente competente." : "Any disputes on the interpretation of this deed of donation shall be submitted to the competent civil court of justice."}
+          </div>
+        ` : `
+          <div class="section-title">${activeLang==='FR'? "CLAUSES D'ENGAGEMENT CONTRACTUELLES" : activeLang==='IT'? "CLAUSOLE CONTRATTUAI DI CREDITO" : "CONTRACTUAL COVENANTS AND STIPULATIONS"}</div>
+          
+          <div class="article-title">Article 1 : ${activeLang==='FR'? "Objet du financement et destination réglementée des fonds" : activeLang==='IT'? "Oggetto e destinazione dei fondi" : "Object and Purposed Allocation"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? (isMixed ? `La Société prêteuse consent à mettre à disposition de l'emprunteur particulier l'enveloppe consolidée de <strong>${formatM(totalRepayable)}</strong> (comprenant le principal exigible de <strong>${formatM(loan.amount)}</strong> et les coûts afférents).` : `Le Prêteur consent à mettre à disposition de l'Emprunteur l'enveloppe consolidée de <strong>${formatM(totalRepayable)}</strong> (comprenant le principal exigible de <strong>${formatM(loan.amount)}</strong> et les coûts afférents).`) : activeLang==='IT'? (isMixed ? `L'azienda mutuante concede un fido al mutuatario privato per l'importo totale consolidato di <strong>${formatM(totalRepayable)}</strong> (capitale di <strong>${formatM(loan.amount)}</strong> e interessi).` : `Il Mutuante concede un fido al Mutuatario per l'importo totale consolidato di <strong>${formatM(totalRepayable)}</strong> (capitale di <strong>${formatM(loan.amount)}</strong> e interessi).`) : (isMixed ? `The Corporate Lender grants credit to the private Debtor for the general consolidated amount of <strong>${formatM(totalRepayable)}</strong> (principal of <strong>${formatM(loan.amount)}</strong> plus borrowing costs).` : `The Lender grants credit to the Debtor for the general consolidated amount of <strong>${formatM(totalRepayable)}</strong> (principal of <strong>${formatM(loan.amount)}</strong> plus borrowing costs).`)}
+          </div>
+
+          <div class="article-title">Article 2 : ${activeLang==='FR'? "Calendrier d'amortissement et échéances" : activeLang==='IT'? "Termini di Ammortamento e Rateizzazione" : "Amortization and Installment Schedule"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? `L'amortissement de la dette s'établira sur la base de <strong>${loan.durationMonths}</strong> échéances récurrentes de <strong>${formatM(installmentPayment)}</strong> chacune, de manière consécutive, avec début le <strong>${firstDateFormatted}</strong> et fin le <strong>${finalDateFormatted}</strong>.` : activeLang==='IT'? `L'ammortamento si svolgerà in <strong>${loan.durationMonths}</strong> scadenze ricorrenti di valore fisso pari a <strong>${formatM(installmentPayment)}</strong>, con decorrenza prima scadenza al <strong>${firstDateFormatted}</strong>.` : `Repayments are structures across <strong>${loan.durationMonths}</strong> consecutive installments of <strong>${formatM(installmentPayment)}</strong>, starting on <strong>${firstDateFormatted}</strong> and concluding on <strong>${finalDateFormatted}</strong>.`}
+          </div>
+
+          <div class="article-title">Article 3 : ${activeLang==='FR'? "Droit souverain de remboursement anticipé sans frais" : activeLang==='IT'? "Facoltà di Estinzione Anticipata" : "Right of Prepayment Without Penalty"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? (isMixed ? "L'Emprunteur particulier conserve expressément la faculté discrétionnaire de solder sa dette par anticipation, sans frais ou pénalités d'office." : "L'Emprunteur conserve expressément la faculté discrétionnaire de solder sa dette par anticipation, sans frais ou pénalités d'office.") : activeLang==='IT'? (isMixed ? "Il debitore privato conserva il diritto di saldare in qualsiasi istante l'importo residuo, esente da penalità." : "Il debitore corporativo conserva il diritto di saldare in qualsiasi istante l'importo residuo, esente da penalità.") : "The borrowing party retains the full sovereign right to prepay the outstanding principal at any time without any early repayment charge."}
+          </div>
+
+          <div class="article-title">Article 4 : ${activeLang==='FR'? "Responsabilité solidaire et déclaration de solvabilité" : activeLang==='IT'? "Solidarietà e Garanzia Costituzionale" : "Guarantees and Joint Liability"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? (isMixed ? "L'emprunteur particulier engage solidairement l'ensemble de ses avoirs personnels pour la bonne réalisation du remboursement." : "Le signataire et ses délégations d'affaires engagent solidairement l'ensemble des avoirs de la structure emprunteuse.") : activeLang==='IT'? (isMixed ? "Il mutuatario privato impegna in solido tutti i suoi beni personali per il corretto completamento del rimborso." : "I rappresentanti aziendali certificano la solidarietà di pagamento solido ed impegnano l'entità sociale per l'adempimento.") : (isMixed ? "The private borrower commits all their personal assets jointly and severally for the proper fulfillment of the repayment." : "The corporate representatives confirm that this obligation is jointly and severally binding upon the assets of the business.")}
+          </div>
+
+          <div class="section-title">${activeLang==='FR'? "Homologation d'acte et constitution de garantie" : activeLang==='IT'? "Frais Notarili e Assicurazione" : "Notary Certification and Service Fees"}</div>
+          <div class="article-content" style="font-weight: bold; background-color: #fafbfa; padding: 12px; border-left: 3px solid #1d4ed8;">
+            ${activeLang==='FR'? `Pour valider l'acte, les frais obligatoires de constitution d'assurance et d'homologation de <strong>${formatM(loan.feeAmount)}</strong> devront être soldés par l'emprunteur.` : activeLang==='IT'? `L'omologazione civile prevede spese accessorie di <strong>${formatM(loan.feeAmount)}</strong> a carico del beneficiario, indispensabili prima del trasferimento.` : `To finalize records, the mandatory administrative process cost of <strong>${formatM(loan.feeAmount)}</strong> is billed, required prior to wire.`}
+          </div>
+
+          <div class="article-title">Article 5 : ${activeLang==='FR'? "Pénalités moratoires et déchéance immédiate du terme" : activeLang==='IT'? "Interessi Moratori in caso di ritardo" : "Late Payments and Interest Uplift"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? `Tout retard persistant de plus de cinq jours francs autorisera une majoration de <strong>${loan.penaltyRate}%</strong> mensuel assortie d'une astreinte de <strong>${formatM(loan.penaltyFixedAmount)}</strong>.` : activeLang==='IT'? `In caso di insoluto oltre i 5 giorni, si applicherà un tasso aggiuntivo del <strong>${loan.penaltyRate}%</strong> mensile unitamente alla penalità fissa di <strong>${formatM(loan.penaltyFixedAmount)}</strong>.` : `Any default persisting beyond 5 business days incurs late interest rates of <strong>${loan.penaltyRate}%</strong> monthly alongside a flat fee of <strong>${formatM(loan.penaltyFixedAmount)}</strong>.`}
+          </div>
+
+          <div class="article-title">Article 6 : ${activeLang==='FR'? "Droit applicable et attribution de juridiction" : activeLang==='IT'? "Tutela Giudiziaria e Foro Competente" : "Applicable Jurisdiction"}</div>
+          <div class="article-content">
+            ${activeLang==='FR'? (isMixed ? "Le règlement du contrat se réfère au droit civil et commercial applicable. Tout conflit sera du ressort exclusif du Tribunal compétent civilement." : "Le règlement du contrat se réfère au cadre réglementaire des affaires européennes. Tout conflit sera du ressort exclusif du Tribunal de Commerce.") : activeLang==='IT'? (isMixed ? "Il contratto è disciplinato dalle leggi civili e commerciali applicabili. Per qualsiasi vertenza, il foro competente ha giurisdizione esclusiva." : "Il contratto è disciplinato dalle leggi commerciali europee. Per qualsiasi vertenza, il foro commerciale eletto ha competenza esclusiva.") : (isMixed ? "This agreement is governed by the rules of applicable civil and commercial law, any claims submitted exclusively to the competent Courts of Justice." : "This commercial agreement is governed by the rules of European Trade Law, any claims submitted exclusively to the Commercial Courts.")}
+          </div>
+        `}
 
         <p style="text-align: right; margin-top: 30px; font-style: italic; font-weight: bold; border-top: 1px dotted #ccc; padding-top: 10px;">
           ${currentT.labelDone}
@@ -1045,8 +1418,8 @@ export default function App() {
           <tr>
             <!-- Column 1: LENDER (CREDIVITE S.A.) WITH SPACIOUS PACKAGING -->
             <td class="sig-cell" style="width: 33%; vertical-align: top; border: 1px solid #b8c2cc; border-radius: 4px; padding: 12px; background-color: #f4f6f8; position: relative;">
-              <strong style="color: #1d4ed8; font-size: 9.5pt; font-family: serif; text-transform: uppercase; display: block; border-bottom: 1px solid #1d4ed8; padding-bottom: 4px; margin-bottom: 6px;">${currentT.labelLender}</strong>
-              <span style="font-size: 8pt; color: #4b5563; display: block; margin-bottom: 4px;">Proxy Lendeur: <strong>${lender.name}</strong></span>
+              <strong style="color: #1d4ed8; font-size: 9.5pt; font-family: serif; text-transform: uppercase; display: block; border-bottom: 1px solid #1d4ed8; padding-bottom: 4px; margin-bottom: 6px;">${customExportLenderRole}</strong>
+              <span style="font-size: 8pt; color: #4b5563; display: block; margin-bottom: 4px;">${isDonation ? (activeLang === 'FR' ? "Donateur :" : activeLang === 'IT' ? "Donatore :" : "Donor :") : (activeLang === 'FR' ? "Créancier :" : activeLang === 'IT' ? "Creditore :" : "Creditor :")} <strong>${lender.name}</strong></span>
               
               <!-- Signature and Overlapping Stamp Area -->
               <div style="height: 80px; position: relative; overflow: visible; display: block; margin-top: 10px;">
@@ -1074,22 +1447,24 @@ export default function App() {
                     <path id="lender-stamp-text-upper" d="M 16,50 A 34,34 0 1,1 84,50" fill="none" />
                     <text font-size="5.2" font-weight="bold" fill="#1d4ed8">
                       <textPath href="#lender-stamp-text-upper" startOffset="50%" text-anchor="middle">
-                        ★ CREDIVITE S.A. ★
+                        ★ ${isDonation ? (lender.name.substring(0, 14).toUpperCase() || "DONATEUR") : isB2B ? (lender.name.substring(0, 14).toUpperCase() || "SOCIETE") : "CREDIVITE S.A."} ★
                       </textPath>
                     </text>
                     
                     <path id="lender-stamp-text-lower" d="M 84,50 A 34,34 0 1,1 16,50" fill="none" />
                     <text font-size="4.5" font-weight="bold" fill="#1d4ed8">
                       <textPath href="#lender-stamp-text-lower" startOffset="50%" text-anchor="middle">
-                        ${activeLang === 'FR' ? "CONTRÔLE ADMINISTRATIF" : activeLang === 'IT' ? "CONTROLLO AMMINISTRATIVO" : "DIRECTORATE SECURED LOAN"}
+                        ${isDonation ? (activeLang === 'FR' ? "DONATION ENREGISTRÉE" : activeLang === 'IT' ? "DONAZIONE REGISTRATA" : "SECURED DONATION DEED") : (activeLang === 'FR' ? "CONTRÔLE ADMINISTRATIF" : activeLang === 'IT' ? "CONTROLLO AMMINISTRATIVO" : "DIRECTORATE SECURED LOAN")}
                       </textPath>
                     </text>
                     
                     <text x="50" y="47" font-size="4.2" text-anchor="middle" fill="#1d4ed8">${activeLang === 'FR' ? "OFFICIEL" : activeLang === 'IT' ? "UFFICIALE" : "OFFICIAL"}</text>
-                    <text x="50" y="58" font-size="5.2" font-weight="black" text-anchor="middle" fill="#1d4ed8">${activeLang === 'FR' ? "AGRÉÉ" : activeLang === 'IT' ? "APPROVATO" : "APPROVED"}</text>
+                    <text x="50" y="58" font-size="5.2" font-weight="black" text-anchor="middle" fill="#1d4ed8">${isDonation ? (activeLang === 'FR' ? "DONNÉ" : activeLang === 'IT' ? "DONATO" : "GIFTED") : (activeLang === 'FR' ? "AGRÉÉ" : activeLang === 'IT' ? "APPROVATO" : "APPROVED")}</text>
                   </svg>
                 </div>
               </div>
+
+
             </td>
 
             <!-- Column 2: NOTARY (Ericam Dupont/Sebastien Gabard) -->
@@ -1143,8 +1518,8 @@ export default function App() {
 
             <!-- Column 3: BORROWER -->
             <td class="sig-cell" style="width: 33%; vertical-align: top; border: 1px solid #a7f3d0; border-radius: 4px; padding: 12px; background-color: #f0fdf4; position: relative;">
-              <strong style="color: #047857; font-size: 9.5pt; font-family: serif; text-transform: uppercase; display: block; border-bottom: 1px solid #047857; padding-bottom: 4px; margin-bottom: 6px;">${currentT.labelBorrower}</strong>
-              <span style="font-size: 8pt; color: #4b5563; display: block; margin-bottom: 4px;">Débiteur: <strong>${borrower.name}</strong></span>
+              <strong style="color: #047857; font-size: 9.5pt; font-family: serif; text-transform: uppercase; display: block; border-bottom: 1px solid #047857; padding-bottom: 4px; margin-bottom: 6px;">${customExportBorrowerRole}</strong>
+              <span style="font-size: 8pt; color: #4b5563; display: block; margin-bottom: 4px;">${isDonation ? (activeLang === 'FR' ? "Donataire :" : activeLang === 'IT' ? "Donatario :" : "Donee :") : (activeLang === 'FR' ? "Débiteur :" : activeLang === 'IT' ? "Debitore :" : "Debtor :")} <strong>${borrower.name}</strong></span>
               
               <!-- Signature Area -->
               <div style="height: 80px; position: relative; display: block; margin-top: 10px;">
@@ -1158,6 +1533,8 @@ export default function App() {
                   `}
                 </div>
               </div>
+
+
             </td>
           </tr>
         </table>
@@ -1504,6 +1881,97 @@ export default function App() {
 
               {/* Wizard Multi-Step Form Layout */}
               <div className="p-6 sm:p-8 space-y-6">
+                
+                {/* GLOBAL DOCUMENT TYPE & CONTEXT SELECTOR */}
+                <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3.5 shadow-inner">
+                  <div className="flex items-center justify-between border-b border-slate-850 pb-2">
+                    <span className="text-xs font-bold text-amber-500 tracking-wider uppercase flex items-center gap-1.5 font-mono">
+                      <FileText className="h-4 w-4" />
+                      Configuration Globale de l'Acte Cons civil
+                    </span>
+                    <span className="text-[10px] bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/10">
+                      Standard Européen
+                    </span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] text-zinc-300 font-bold block mb-1">1. Contexte Juridique de l'Acte</label>
+                      <select
+                        value={contractType}
+                        onChange={(e) => {
+                          const val = e.target.value as ContractType;
+                          setContractType(val);
+                          setBannerAlert(`Nouveau modèle de contrat configuré : ${
+                            val === 'personal_loan' ? 'Prêt entre particuliers' :
+                            val === 'business_loan' ? 'Prêt entre entreprise (B2B)' :
+                            val === 'party_business_loan' ? 'Prêt entre particulier et entreprise' :
+                            'Contrat de donation officielle'
+                          }.`);
+                          
+                          // If current document is mortgage and they switched to donation, let's stay on main contract
+                          if (val === 'donation' && selectedDoc !== 'main_contract') {
+                            setSelectedDoc('main_contract');
+                          }
+                        }}
+                        className="w-full bg-slate-900 border border-slate-850 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-amber-500 font-semibold"
+                      >
+                        <option value="personal_loan">🤝 Prêt entre Particuliers Civils</option>
+                        <option value="business_loan">🏢 Prêt entre Entreprises (B2B - Pro)</option>
+                        <option value="party_business_loan">⚖️ Prêt mixte (Particulier vers Entreprise)</option>
+                        <option value="donation">🎁 Acte de Donation Officiel (Libéralité)</option>
+                      </select>
+                      <span className="text-[9.5px] text-zinc-500 mt-1 block">
+                        Fige l'introduction légale et adapte les clauses aux exigences de chaque profil.
+                      </span>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] text-zinc-300 font-bold block mb-1">2. Document Spécifique à Configurer / Exporter</label>
+                      <select
+                        value={selectedDoc}
+                        onChange={(e) => {
+                          const val = e.target.value as DocumentViewType;
+                          setSelectedDoc(val);
+                          setBannerAlert(`Document sélectionné : ${e.target.options[e.target.selectedIndex].text}. Remplissez le formulaire puis affichez l'acte !`);
+                        }}
+                        className="w-full bg-slate-900 border border-slate-850 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-amber-500 font-semibold"
+                      >
+                        <optgroup label="CONTRATS & ACCORDS PRINCIPAUX">
+                          <option value="main_contract">📄 Acte de Contrat Principal d'Origine</option>
+                          {contractType !== 'donation' && (
+                            <>
+                              <option value="loan_offer">✉️ Offre de Prêt Acceptée Formelle</option>
+                              <option value="amortization_schedule">📅 Tableau d'Amortissement Consolidé</option>
+                              <option value="borrower_insurance">🛡️ Contrat d'Assurance Emprunteur Juris</option>
+                              <option value="general_credit_terms">📚 Conditions Générales de Crédit Consortiaux</option>
+                            </>
+                          )}
+                        </optgroup>
+                        {contractType !== 'donation' && (
+                          <optgroup label="SÛRETÉS & RECOUVREMENT">
+                            <option value="sepa_mandate">🏦 Mandat de Prélèvement SEPA Européen</option>
+                            <option value="guarantor_agreement">👤 Contrat de Cautionnement Solidaire (Garant)</option>
+                            <option value="mortgage_deed">🏠 Acte d'Hypothèque Immobilière Solennel</option>
+                            <option value="pledge_agreement">🪙 Contrat de Nantissement ou Gage de Sûreté</option>
+                            <option value="debt_acknowledgment">📜 Reconnaissance de Dette Civile Officielle</option>
+                          </optgroup>
+                        )}
+                        <optgroup label="FORMALITÉS ADMINISTRATIVES & FISCALITÉ">
+                          <option value="fees_agreement">💼 Accord sur les Frais de Dossier & Commissions</option>
+                          <option value="notary_registration">🏛️ Acte d'Enregistrement Notarial Judiciaire</option>
+                          <option value="tva_tax_statement">📊 Déclaration Administrative de TVA & Fiscalité</option>
+                          {contractType !== 'donation' && (
+                            <option value="loan_addendum">✍️ Avenant Modificatif au Contrat de Prêt</option>
+                          )}
+                        </optgroup>
+                      </select>
+                      <span className="text-[9.5px] text-zinc-500 mt-1 block">
+                        Exige l'ensemble des 14 documents requis par les administrations européennes lors d'un audit de prêt ou succession.
+                      </span>
+                    </div>
+                  </div>
+                </div>
                 
                 {/* STEP 1: LENDER DETAILED INFORMATIONS */}
                 {wizardStep === 1 && (
@@ -2041,6 +2509,18 @@ export default function App() {
                           <option value="IT">Italie 🇮🇹</option>
                           <option value="FR">France 🇫🇷</option>
                           <option value="EU">Union Européenne 🇪🇺</option>
+                          <option value="DE">Allemagne 🇩🇪</option>
+                          <option value="ES">Espagne 🇪🇸</option>
+                          <option value="BE">Belgique 🇧🇪</option>
+                          <option value="NL">Pays-Bas 🇳🇱</option>
+                          <option value="PT">Portugal 🇵🇹</option>
+                          <option value="AT">Autriche 🇦🇹</option>
+                          <option value="PL">Pologne 🇵🇱</option>
+                          <option value="RO">Roumanie 🇷🇴</option>
+                          <option value="SE">Suède 🇸🇪</option>
+                          <option value="CH">Suisse 🇨🇭</option>
+                          <option value="GB">Royaume-Uni 🇬🇧</option>
+                          <option value="UN">Nations Unies 🇺🇳</option>
                         </select>
                       </div>
                       <div>
@@ -2053,6 +2533,18 @@ export default function App() {
                           <option value="FR">France 🇫🇷</option>
                           <option value="IT">Italie 🇮🇹</option>
                           <option value="EU">Union Européenne 🇪🇺</option>
+                          <option value="DE">Allemagne 🇩🇪</option>
+                          <option value="ES">Espagne 🇪🇸</option>
+                          <option value="BE">Belgique 🇧🇪</option>
+                          <option value="NL">Pays-Bas 🇳🇱</option>
+                          <option value="PT">Portugal 🇵🇹</option>
+                          <option value="AT">Autriche 🇦🇹</option>
+                          <option value="PL">Pologne 🇵🇱</option>
+                          <option value="RO">Roumanie 🇷🇴</option>
+                          <option value="SE">Suède 🇸🇪</option>
+                          <option value="CH">Suisse 🇨🇭</option>
+                          <option value="GB">Royaume-Uni 🇬🇧</option>
+                          <option value="UN">Nations Unies 🇺🇳</option>
                         </select>
                       </div>
                     </div>
@@ -2242,6 +2734,78 @@ export default function App() {
 
             </div>
 
+            {/* Document Navigation Sub-Bar */}
+            <div className="bg-[#111827] border-b border-slate-800 px-6 py-2.5 flex flex-col md:flex-row items-center justify-between gap-3 print:hidden flex-shrink-0 text-xs">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-cyan-400" />
+                <span className="text-slate-300 font-bold">📄 Document affiché à l'écran :</span>
+                <span className="text-slate-400 text-[11px]">Basculez librement entre les 14 actes constitutifs du dossier juridique européen.</span>
+              </div>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+                <select
+                  value={contractType}
+                  onChange={(e) => {
+                    const val = e.target.value as ContractType;
+                    setContractType(val);
+                    setBannerAlert(`Nouveau modèle de contrat configuré : ${
+                      val === 'personal_loan' ? "Prêt entre particuliers" :
+                      val === 'business_loan' ? "Prêt entre entreprise (B2B)" :
+                      val === 'party_business_loan' ? "Prêt particulier-entreprise" :
+                      "Acte de donation officielle"
+                    }`);
+                    if (val === 'donation' && selectedDoc !== 'main_contract') {
+                      setSelectedDoc('main_contract');
+                    }
+                  }}
+                  className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 h-9 font-semibold"
+                >
+                  <option value="personal_loan">🤝 Prêt entre Particuliers</option>
+                  <option value="business_loan">🏢 Prêt entre Entreprises (B2B)</option>
+                  <option value="party_business_loan">⚖️ Prêt Particulier-Entreprise</option>
+                  <option value="donation">🎁 Acte de Donation</option>
+                </select>
+
+                <select
+                  value={selectedDoc}
+                  onChange={(e) => {
+                    const val = e.target.value as DocumentViewType;
+                    setSelectedDoc(val);
+                    setBannerAlert(`Document affiché : ${e.target.options[e.target.selectedIndex].text}`);
+                  }}
+                  className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-amber-400 focus:outline-none focus:border-amber-500 h-9 font-bold"
+                >
+                  <optgroup label="CONTRATS & ACCORDS PRINCIPAUX">
+                    <option value="main_contract">📄 Acte de Contrat Principal d'Origine</option>
+                    {contractType !== 'donation' && (
+                      <>
+                        <option value="loan_offer">✉️ Offre de Prêt Acceptée Formelle</option>
+                        <option value="amortization_schedule">📅 Tableau d'Amortissement Consolidé</option>
+                        <option value="borrower_insurance">🛡️ Contrat d'Assurance Emprunteur Juris</option>
+                        <option value="general_credit_terms">📚 Conditions Générales de Crédit Consortiaux</option>
+                      </>
+                    )}
+                  </optgroup>
+                  {contractType !== 'donation' && (
+                    <optgroup label="SÛRETÉS & RECOUVREMENT">
+                      <option value="sepa_mandate">🏦 Mandat de Prélèvement SEPA Européen</option>
+                      <option value="guarantor_agreement">👤 Contrat de Cautionnement Solidaire (Garant)</option>
+                      <option value="mortgage_deed">🏠 Acte d'Hypothèque Immobilière Solennel</option>
+                      <option value="pledge_agreement">🪙 Contrat de Nantissement ou Gage de Sûreté</option>
+                      <option value="debt_acknowledgment">📜 Reconnaissance de Dette Civile Officielle</option>
+                    </optgroup>
+                  )}
+                  <optgroup label="FORMALITÉS ADMINISTRATIVES & FISCALITÉ">
+                    <option value="fees_agreement">💼 Accord sur les Frais de Dossier & Commissions</option>
+                    <option value="notary_registration">🏛️ Acte d'Enregistrement Notarial Judiciaire</option>
+                    <option value="tva_tax_statement">📊 Déclaration Administrative de TVA & Fiscalité</option>
+                    {contractType !== 'donation' && (
+                      <option value="loan_addendum">✍️ Avenant Modificatif au Contrat de Prêt</option>
+                    )}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
             {/* Live Translation Bar */}
             <div className="bg-slate-950 border-b border-slate-850 px-6 py-2.5 flex flex-col md:flex-row items-center justify-between gap-3 print:hidden flex-shrink-0 text-xs">
               <div className="flex items-center gap-2">
@@ -2402,6 +2966,8 @@ export default function App() {
                   onOpenSignature={(party) => setSigTarget(party)}
                   fontFamily={fontFamily}
                   exportMode={exportMode}
+                  contractType={contractType}
+                  selectedDoc={selectedDoc}
                 />
               </div>
             </div>

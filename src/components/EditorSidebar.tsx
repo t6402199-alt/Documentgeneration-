@@ -649,7 +649,41 @@ export function EditorSidebar({
                   <option value="IT">Italie 🇮🇹</option>
                   <option value="FR">France 🇫🇷</option>
                   <option value="EU">Union Eur. 🇪🇺</option>
-                  <option value="UN">Nations Unies</option>
+                  <option value="DE">Allemagne 🇩🇪</option>
+                  <option value="ES">Espagne 🇪🇸</option>
+                  <option value="BE">Belgique 🇧🇪</option>
+                  <option value="NL">Pays-Bas 🇳🇱</option>
+                  <option value="LU">Luxembourg 🇱🇺</option>
+                  <option value="PT">Portugal 🇵🇹</option>
+                  <option value="IE">Irlande 🇮🇪</option>
+                  <option value="GR">Grèce 🇬🇷</option>
+                  <option value="AT">Autriche 🇦🇹</option>
+                  <option value="PL">Pologne 🇵🇱</option>
+                  <option value="RO">Roumanie 🇷🇴</option>
+                  <option value="SE">Suède 🇸🇪</option>
+                  <option value="DK">Danemark 🇩🇰</option>
+                  <option value="FI">Finlande 🇫🇮</option>
+                  <option value="CH">Suisse 🇨🇭</option>
+                  <option value="GB">Royaume-Uni 🇬🇧</option>
+                  <option value="HR">Croatie 🇭🇷</option>
+                  <option value="CZ">Rép. Tchèque 🇨🇿</option>
+                  <option value="HU">Hongrie 🇭🇺</option>
+                  <option value="BG">Bulgarie 🇧🇬</option>
+                  <option value="EE">Estonie 🇪🇪</option>
+                  <option value="LT">Lituanie 🇱🇹</option>
+                  <option value="LV">Lettonie 🇱🇻</option>
+                  <option value="NO">Norvège 🇳🇴</option>
+                  <option value="IS">Islande 🇮🇸</option>
+                  <option value="MC">Monaco 🇲🇨</option>
+                  <option value="LI">Liechtenstein 🇱🇮</option>
+                  <option value="SK">Slovaquie 🇸🇰</option>
+                  <option value="SI">Slovénie 🇸🇮</option>
+                  <option value="UA">Ukraine 🇺🇦</option>
+                  <option value="MT">Malte 🇲🇹</option>
+                  <option value="CY">Chypre 🇨🇾</option>
+                  <option value="AL">Albanie 🇦🇱</option>
+                  <option value="RS">Serbie 🇷🇸</option>
+                  <option value="UN">Nations Unies 🇺🇳</option>
                 </select>
               </div>
               
@@ -664,7 +698,41 @@ export function EditorSidebar({
                   <option value="FR">France 🇫🇷</option>
                   <option value="IT">Italie 🇮🇹</option>
                   <option value="EU">Union Eur. 🇪🇺</option>
-                  <option value="UN">Nations Unies</option>
+                  <option value="DE">Allemagne 🇩🇪</option>
+                  <option value="ES">Espagne 🇪🇸</option>
+                  <option value="BE">Belgique 🇧🇪</option>
+                  <option value="NL">Pays-Bas 🇳🇱</option>
+                  <option value="LU">Luxembourg 🇱🇺</option>
+                  <option value="PT">Portugal 🇵🇹</option>
+                  <option value="IE">Irlande 🇮🇪</option>
+                  <option value="GR">Grèce 🇬🇷</option>
+                  <option value="AT">Autriche 🇦🇹</option>
+                  <option value="PL">Pologne 🇵🇱</option>
+                  <option value="RO">Roumanie 🇷🇴</option>
+                  <option value="SE">Suède 🇸🇪</option>
+                  <option value="DK">Danemark 🇩🇰</option>
+                  <option value="FI">Finlande 🇫🇮</option>
+                  <option value="CH">Suisse 🇨🇭</option>
+                  <option value="GB">Royaume-Uni 🇬🇧</option>
+                  <option value="HR">Croatie 🇭🇷</option>
+                  <option value="CZ">Rép. Tchèque 🇨🇿</option>
+                  <option value="HU">Hongrie 🇭🇺</option>
+                  <option value="BG">Bulgarie 🇧🇬</option>
+                  <option value="EE">Estonie 🇪🇪</option>
+                  <option value="LT">Lituanie 🇱🇹</option>
+                  <option value="LV">Lettonie 🇱🇻</option>
+                  <option value="NO">Norvège 🇳🇴</option>
+                  <option value="IS">Islande 🇮🇸</option>
+                  <option value="MC">Monaco 🇲🇨</option>
+                  <option value="LI">Liechtenstein 🇱🇮</option>
+                  <option value="SK">Slovaquie 🇸🇰</option>
+                  <option value="SI">Slovénie 🇸🇮</option>
+                  <option value="UA">Ukraine 🇺🇦</option>
+                  <option value="MT">Malte 🇲🇹</option>
+                  <option value="CY">Chypre 🇨🇾</option>
+                  <option value="AL">Albanie 🇦🇱</option>
+                  <option value="RS">Serbie 🇷🇸</option>
+                  <option value="UN">Nations Unies 🇺🇳</option>
                 </select>
               </div>
             </div>
