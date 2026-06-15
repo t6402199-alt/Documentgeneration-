@@ -4,6 +4,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 import { PartyDetails, LoanDetails, StylingDetails, ContractType, DocumentViewType } from './types';
 import { SignaturePad } from './components/SignaturePad';
 import { ContractPreview } from './components/ContractPreview';
@@ -627,6 +629,79 @@ export default function App() {
   // NATIVE PRINT CALL
   const triggerPrintPDF = () => {
     window.print();
+  };
+
+  // ADVANCED CONVERSION AND DOWNLOAD DIRECT TO PDF
+  const triggerDownloadPDF = async () => {
+    const sheetElement = document.getElementById('printed-contract-sheet');
+    if (!sheetElement) {
+      setBannerAlert("Erreur de récupération de l'élément de rendu contractuel.");
+      return;
+    }
+
+    setBannerAlert("Génération du document PDF officiel en cours (moteur haute-définition). Veuillez patienter quelques secondes...");
+
+    try {
+      // 1. Render the element to a High-Definition Canvas
+      const canvas = await html2canvas(sheetElement, {
+        scale: 2.0, // High-DPI crystal clear vector rendering
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
+        backgroundColor: '#f1f5f9', // Clean white-slate background identical to screen
+        windowWidth: 800, // Fixed layout width to maintain perfect printable proportions
+        scrollX: 0,
+        scrollY: 0,
+      });
+
+      // 2. Extract JPEG representation with high-mid compression quality
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+      // 3. Coordinate conversion proportions for standard DIN-A4 page sizes
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      const canvasHeightInMm = (canvas.height * imgWidth) / canvas.width;
+
+      // 4. Initialize the custom jsPDF instance
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      let heightLeft = canvasHeightInMm;
+      let position = 0;
+
+      // Push the first page
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, Math.min(canvasHeightInMm, pageHeight), undefined, 'FAST');
+      heightLeft -= pageHeight;
+
+      // Handle subsequent page splits gracefully
+      while (heightLeft > 0) {
+        position = heightLeft - canvasHeightInMm; // Offset position to create clean division pages
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, canvasHeightInMm, undefined, 'FAST');
+        heightLeft -= pageHeight;
+      }
+
+      // Name elements
+      const docLabel = selectedDoc.toLowerCase();
+      const typeLabel = contractType.toLowerCase();
+      const langLabel = (styling.customLanguageLabel || styling.language).toLowerCase();
+      const modeLabel = exportMode === 'editable' ? 'modifiable' : 'officiel';
+      const cleanLender = lender.name.replace(/\s+/g, '_');
+      const cleanBorrower = borrower.name.replace(/\s+/g, '_');
+      const filename = `acte_${docLabel}_${typeLabel}_${langLabel}_${modeLabel}_${cleanLender}_vs_${cleanBorrower}.pdf`;
+
+      // 5. Trigger download event
+      pdf.save(filename);
+
+      setBannerAlert(`Acte de prêt officiel au format PDF téléchargé avec succès ! Fichier : ${filename}`);
+    } catch (err: any) {
+      console.error("PDF target export error details:", err);
+      const errorMsg = err?.message || String(err);
+      setBannerAlert(`Échec de la génération PDF : ${errorMsg}. Veuillez utiliser l'option 'Imprimer / PDF' si votre navigateur bloque les popups/téléchargements.`);
+    }
   };
 
   // EXPORT WORD DOCUMENT .DOC OR HYPER-COMPATIBLE EDITABLE HTML
@@ -2733,9 +2808,18 @@ export default function App() {
               {/* The major goal download options HTML, WORD & PDF */}
               <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
                 <button
+                  onClick={triggerDownloadPDF}
+                  className="w-full sm:w-auto p-2.5 px-5 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-black text-xs rounded-lg transition shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide cursor-pointer scale-102 active:scale-98"
+                  title="Télécharger l'acte authentique sous format PDF officiel et autonome"
+                >
+                  <Download className="h-4 w-4 text-sky-200 animate-bounce" />
+                  Télécharger en PDF
+                </button>
+
+                <button
                   onClick={triggerPrintPDF}
                   className="w-full sm:w-auto p-2.5 px-4.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-white font-extrabold text-xs rounded-lg transition flex items-center justify-center gap-2 shadow-md uppercase tracking-wide"
-                  title="Ouvrir l'imprimante système pour enregistrer en PDF propre A4"
+                  title="Ouvrir l'imprimante système pour enregistrer en PDF propre A4 ou imprimer"
                 >
                   <Printer className="h-4 w-4 text-slate-300" />
                   Imprimer / PDF
@@ -2743,11 +2827,11 @@ export default function App() {
                 
                 <button
                   onClick={() => triggerDownloadContract('html')}
-                  className="w-full sm:w-auto p-2.5 px-5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-xs rounded-lg transition shadow-md flex items-center justify-center gap-2 uppercase tracking-wide cursor-pointer scale-102 active:scale-98 animate-pulse"
+                  className="w-full sm:w-auto p-2.5 px-5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-xs rounded-lg transition shadow-md flex items-center justify-center gap-2 uppercase tracking-wide cursor-pointer scale-102 active:scale-98"
                   title="Télécharger l'acte au format HTML 100% éditable (Recommandé pour smartphones, tablettes Android et PC)"
                 >
                   <FileText className="h-4 w-4" />
-                  HTML Modifiable (Conseillé Android/PC)
+                  HTML Modifiable
                 </button>
 
                 <button
