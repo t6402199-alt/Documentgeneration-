@@ -1553,13 +1553,8 @@ export default function App() {
                 <div style="position: absolute; left: 0; top: 15px; z-index: 10;">
                   ${lender.signatureDrawData ? `
                     <img src="${lender.signatureDrawData}" alt="Signature Prêteur" style="max-height: 55px; max-width: 140px; object-fit: contain;" />
-                  ` : lender.signatureType === 'text' && lender.name ? `
-                    <span style="font-family: 'Brush Script MT', 'Caveat', cursive, sans-serif; font-size: 15pt; color: #1d4ed8; font-weight: bold;">${lender.name}</span>
                   ` : `
-                    <svg width="112" height="40" style="color: #1e3a8a;" viewBox="0 0 140 50" fill="none">
-                      <path d="M10,25 Q35,8 45,32 Q75,4 95,28 T130,12 M35,22 L115,26" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                      <path d="M15,15 Q65,42 125,20" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.6" />
-                    </svg>
+                    <div style="border-bottom: 1px dotted #cbd5e1; width: 120px; padding-top: 30px;"></div>
                   `}
                 </div>
 
@@ -1604,13 +1599,8 @@ export default function App() {
                 <div style="position: absolute; left: 0; top: 15px; z-index: 10;">
                   ${notary.signatureDrawData ? `
                     <img src="${notary.signatureDrawData}" alt="Signature Notaire" style="max-height: 55px; max-width: 140px; object-fit: contain;" />
-                  ` : notary.signatureType === 'text' && notary.name ? `
-                    <span style="font-family: 'Brush Script MT', 'Caveat', cursive, sans-serif; font-size: 15pt; color: #2563eb; font-weight: bold;">${notary.name}</span>
                   ` : `
-                    <svg width="112" height="40" style="color: #133c87;" viewBox="0 0 140 50" fill="none">
-                      <path d="M12,18 C30,35 60,5 75,32 Q105,4 125,18 M20,38 L120,12" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" />
-                      <circle cx="45" cy="22" r="3" stroke="currentColor" stroke-width="1" fill="none" />
-                    </svg>
+                    <div style="border-bottom: 1px dotted #cbd5e1; width: 120px; padding-top: 30px;"></div>
                   `}
                 </div>
 
@@ -1684,10 +1674,8 @@ export default function App() {
                 <div style="position: absolute; left: 0; top: 15px; z-index: 10;">
                   ${borrower.signatureDrawData ? `
                     <img src="${borrower.signatureDrawData}" alt="Signature Emprunteur" style="max-height: 55px; max-width: 140px; object-fit: contain;" />
-                  ` : borrower.signatureType === 'text' && borrower.name ? `
-                    <span style="font-family: 'Brush Script MT', 'Caveat', cursive, sans-serif; font-size: 15pt; color: #047857; font-weight: bold;">${borrower.name}</span>
                   ` : `
-                    <div style="border-bottom: 2px dashed #059669; width: 100px; padding-top: 25px; height: 1px;"></div>
+                    <div style="border-bottom: 1px dotted #cbd5e1; width: 120px; padding-top: 30px;"></div>
                   `}
                 </div>
               </div>
@@ -2081,7 +2069,9 @@ export default function App() {
                   <div className="space-y-4 animate-fade-in">
                     <div className="flex items-center gap-2 pb-1.5 border-b border-blue-900/60">
                       <Award className="h-5 w-5 text-blue-400" />
-                      <h3 className="font-serif text-sm font-bold text-white uppercase tracking-wider">Étape 1 : Identification Légale du Prêteur (Créancier)</h3>
+                      <h3 className="font-serif text-sm font-bold text-white uppercase tracking-wider">
+                        {contractType === 'donation' ? "Étape 1 : Identification Légale du Donateur (Bienfaiteur)" : "Étape 1 : Identification Légale du Prêteur (Créancier)"}
+                      </h3>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2192,25 +2182,34 @@ export default function App() {
                     {/* Pre-signature pad visual inside the wizard */}
                     <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div>
-                        <span className="text-xs font-bold text-slate-300 block">Signature officielle du prêteur (Bertytru)</span>
+                        <span className="text-xs font-bold text-slate-300 block">
+                          {contractType === 'donation' ? `Signature officielle du donateur (${lender.name || 'Bertytru'})` : `Signature officielle du prêteur (${lender.name || 'Bertytru'})`}
+                        </span>
                         <span className="text-[10px] text-slate-500">Choisissez de dessiner directement votre paraphe manuellement à l'encre d'Italie.</span>
                       </div>
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => setSigTarget('lender')}
-                          className="p-2 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 hover:text-black font-bold text-xs rounded-lg transition shadow-md flex items-center gap-1"
-                        >
-                          <PenTool className="h-3.5 w-3.5" />
-                          Tracer une signature à la main
-                        </button>
+                      <div className="flex flex-wrap items-center gap-3">
                         {lender.signatureDrawData && (
-                          <button 
-                            onClick={() => clearSignatureData('lender')} 
-                            className="p-2 border border-slate-800 hover:bg-slate-800 text-zinc-400 hover:text-white font-medium text-xs rounded-lg transition"
-                          >
-                            Réinitialiser
-                          </button>
+                          <div className="bg-white/95 border border-slate-700 p-1 rounded flex items-center justify-center h-10 w-24 shadow-sm">
+                            <img src={lender.signatureDrawData} alt="Aperçu signature" className="max-h-8 max-w-full object-contain" />
+                          </div>
                         )}
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => setSigTarget('lender')}
+                            className="p-2 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 hover:text-black font-bold text-xs rounded-lg transition shadow-md flex items-center gap-1"
+                          >
+                            <PenTool className="h-3.5 w-3.5" />
+                            {contractType === 'donation' ? "Dessiner la signature du Donateur" : "Dessiner la signature du Prêteur"}
+                          </button>
+                          {lender.signatureDrawData && (
+                            <button 
+                              onClick={() => clearSignatureData('lender')} 
+                              className="p-2 border border-slate-800 hover:bg-slate-800 text-zinc-400 hover:text-white font-medium text-xs rounded-lg transition"
+                            >
+                              Réinitialiser
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2221,7 +2220,9 @@ export default function App() {
                   <div className="space-y-4 animate-fade-in">
                     <div className="flex items-center gap-2 pb-1.5 border-b border-blue-900/60">
                       <ShieldCheck className="h-5 w-5 text-emerald-400" />
-                      <h3 className="font-serif text-sm font-bold text-white uppercase tracking-wider">Étape 2 : Identification Légale de l'Emprunteur (Débiteur)</h3>
+                      <h3 className="font-serif text-sm font-bold text-white uppercase tracking-wider">
+                        {contractType === 'donation' ? "Étape 2 : Identification Légale du Donataire (Bénéficiaire)" : "Étape 2 : Identification Légale de l'Emprunteur (Débiteur)"}
+                      </h3>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2333,48 +2334,36 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-[11px] text-zinc-400 font-medium block mb-1">Adresse email personnelle</label>
-                        <input 
-                          type="email" 
-                          value={borrower.email} 
-                          onChange={(e) => handleBorrowerChange('email', e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white" 
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[11px] text-zinc-400 font-medium block mb-1">N° de mobile de contact</label>
-                        <input 
-                          type="text" 
-                          value={borrower.phone} 
-                          onChange={(e) => handleBorrowerChange('phone', e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white" 
-                        />
-                      </div>
-                    </div>
-
                     <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div>
-                        <span className="text-xs font-bold text-slate-300 block">Signature officielle de l'emprunteur (Annesse)</span>
+                        <span className="text-xs font-bold text-slate-300 block">
+                          {contractType === 'donation' ? `Signature officielle du donataire (${borrower.name || 'Annesse'})` : `Signature officielle de l'emprunteur (${borrower.name || 'Annesse'})`}
+                        </span>
                         <span className="text-[10px] text-slate-500">Tracez votre propre paraphe à l'encre ci-dessous.</span>
                       </div>
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => setSigTarget('borrower')}
-                          className="p-2 px-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-lg transition shadow-md flex items-center gap-1"
-                        >
-                          <PenTool className="h-3.5 w-3.5" />
-                          Tracer la signature debiteur
-                        </button>
+                      <div className="flex flex-wrap items-center gap-3">
                         {borrower.signatureDrawData && (
-                          <button 
-                            onClick={() => clearSignatureData('borrower')} 
-                            className="p-2 border border-slate-800 hover:bg-slate-800 text-zinc-400 hover:text-white font-medium text-xs rounded-lg transition"
-                          >
-                            Reset
-                          </button>
+                          <div className="bg-white/95 border border-slate-700 p-1 rounded flex items-center justify-center h-10 w-24 shadow-sm">
+                            <img src={borrower.signatureDrawData} alt="Aperçu signature" className="max-h-8 max-w-full object-contain" />
+                          </div>
                         )}
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => setSigTarget('borrower')}
+                            className="p-2 px-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-lg transition shadow-md flex items-center gap-1"
+                          >
+                            <PenTool className="h-3.5 w-3.5" />
+                            {contractType === 'donation' ? "Dessiner la signature du Donataire" : "Dessiner la signature de l'Emprunteur"}
+                          </button>
+                          {borrower.signatureDrawData && (
+                            <button 
+                              onClick={() => clearSignatureData('borrower')} 
+                              className="p-2 border border-slate-800 hover:bg-slate-800 text-zinc-400 hover:text-white font-medium text-xs rounded-lg transition"
+                            >
+                              Réinitialiser
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2727,13 +2716,30 @@ export default function App() {
                         <span className="text-xs font-bold text-slate-300 block">Signer l'homologation de l'acte par le Notaire</span>
                         <span className="text-[10px] text-zinc-500">Mettez sous Sceau de l'État votre autorisation.</span>
                       </div>
-                      <button 
-                        onClick={() => setSigTarget('notary')}
-                        className="p-2 px-3 bg-[#1e293b] hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-lg border border-slate-700 transition flex items-center gap-1"
-                      >
-                        <PenTool className="h-3.5 w-3.5" />
-                        Dessiner signature du Notaire (Ericam)
-                      </button>
+                      <div className="flex flex-wrap items-center gap-3">
+                        {notary.signatureDrawData && (
+                          <div className="bg-white/95 border border-slate-700 p-1 rounded flex items-center justify-center h-10 w-24 shadow-sm">
+                            <img src={notary.signatureDrawData} alt="Aperçu signature Notaire" className="max-h-8 max-w-full object-contain" />
+                          </div>
+                        )}
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => setSigTarget('notary')}
+                            className="p-2 px-3 bg-[#1e293b] hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-lg border border-slate-700 transition flex items-center gap-1"
+                          >
+                            <PenTool className="h-3.5 w-3.5" />
+                            Dessiner signature du Notaire
+                          </button>
+                          {notary.signatureDrawData && (
+                            <button 
+                              onClick={() => clearSignatureData('notary')} 
+                              className="p-2 border border-slate-800 hover:bg-slate-800 text-zinc-400 hover:text-white font-medium text-xs rounded-lg transition"
+                            >
+                              Réinitialiser
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                   </div>

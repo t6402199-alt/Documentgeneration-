@@ -2714,26 +2714,15 @@ export function ContractPreview({
                 
                 {/* Visual indicator of manual signature space */}
                 <div className="h-16 flex flex-col items-center justify-center relative bg-white/50 rounded-sm border border-dashed border-stone-200/60 my-1">
-                  {borrower.hasSigned ? (
-                    borrower.signatureDrawData ? (
-                      <img 
-                        src={borrower.signatureDrawData} 
-                        alt="Signature Emprunteur" 
-                        className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
-                        style={{ filter: "url(#real-signature-ink)" }}
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <span 
-                        className={`text-sm text-emerald-800 font-bold select-none cursor-pointer ${borrower.fontStyle || 'font-signature1'}`}
-                        style={{ filter: "url(#real-signature-ink)" }}
-                      >
-                        {borrower.name}
-                      </span>
-                    )
-                  ) : (
-                    <div className="w-20 border-b border-dashed border-stone-300 absolute bottom-3"></div>
-                  )}
+                  {borrower.signatureDrawData ? (
+                    <img 
+                      src={borrower.signatureDrawData} 
+                      alt="Signature Emprunteur" 
+                      className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
+                      style={{ filter: "url(#real-signature-ink)" }}
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : null}
                 </div>
 
 
@@ -2753,26 +2742,15 @@ export function ContractPreview({
                 {/* Beautiful dynamic cursive signature of the Prestatore overlapping with the company stamp */}
                 <div className="h-16 w-full flex items-center justify-center relative">
                   {/* Signature */}
-                  {lender.hasSigned ? (
-                    lender.signatureDrawData ? (
-                      <img 
-                        src={lender.signatureDrawData} 
-                        alt="Signature Prêteur" 
-                        className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
-                        style={{ filter: "url(#real-signature-ink)" }}
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <span 
-                        className={`text-sm text-blue-800 font-bold select-none cursor-pointer z-10 ${lender.fontStyle || 'font-signature2'}`}
-                        style={{ filter: "url(#real-signature-ink)" }}
-                      >
-                        {lender.name}
-                      </span>
-                    )
-                  ) : (
-                    <div className="w-20 border-b border-dashed border-stone-300 absolute bottom-3"></div>
-                  )}
+                  {lender.signatureDrawData ? (
+                    <img 
+                      src={lender.signatureDrawData} 
+                      alt="Signature Prêteur" 
+                      className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
+                      style={{ filter: "url(#real-signature-ink)" }}
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : null}
 
                   {/* Rubber seal / Blue stamp */}
                   <div className="absolute rotate-[-6deg] z-20 opacity-85 scale-[0.62] transform origin-center" style={{ filter: "url(#real-stamp-ink)" }}>
@@ -2810,31 +2788,23 @@ export function ContractPreview({
                 className="flex flex-col justify-between min-h-[145px] relative border border-slate-200 hover:border-red-650 hover:bg-red-50/5 cursor-pointer bg-red-50/10 rounded-sm p-2 text-center h-full overflow-visible shadow-2xs transition-all"
                 title="Cliquez ici pour signer"
               >
-                <span className="font-black text-slate-900 tracking-wider block uppercase text-[8.5px] border-b border-slate-200 pb-1 mb-1">{notary.name.toUpperCase()}</span>
+                <div>
+                  <span className="font-[450] text-[#133c87] text-[7.5px] uppercase block leading-none mb-1">Notaire</span>
+                  <span className="font-black text-slate-900 tracking-wider block uppercase text-[8.5px] border-b border-slate-200 pb-1 mb-1">{notary.name.toUpperCase()}</span>
+                </div>
                 
                 {/* Beautiful dynamic cursive signature of the Notary overlapping with the red seal */}
                 <div className="h-16 w-full flex items-center justify-center relative">
                   {/* Signature */}
-                  {notary.hasSigned ? (
-                    notary.signatureDrawData ? (
-                      <img 
-                        src={notary.signatureDrawData} 
-                        alt="Signature Notaire" 
-                        className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
-                        style={{ filter: "url(#real-signature-ink)" }}
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <span 
-                        className={`text-sm text-[#133c87] font-bold select-none cursor-pointer z-10 ${notary.fontStyle || 'font-signature3'}`}
-                        style={{ filter: "url(#real-signature-ink)" }}
-                      >
-                        {notary.name}
-                      </span>
-                    )
-                  ) : (
-                    <div className="w-20 border-b border-dashed border-stone-300 absolute bottom-3"></div>
-                  )}
+                  {notary.signatureDrawData ? (
+                    <img 
+                      src={notary.signatureDrawData} 
+                      alt="Signature Notaire" 
+                      className="max-h-14 max-w-full object-contain pointer-events-none select-none z-10"
+                      style={{ filter: "url(#real-signature-ink)" }}
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : null}
 
                   {/*
                     <svg className="w-[115px] h-10 text-[#133c87] absolute z-10" style={{ filter: "url(#real-signature-ink)" }} viewBox="0 0 140 50" fill="none">

@@ -17,6 +17,7 @@ export function SignaturePad({ isOpen, onClose, onSave, title }: SignaturePadPro
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasDrawn, setHasDrawn] = useState(false);
+  const [penColor, setPenColor] = useState('#2563eb'); // Default blue ink
 
   useEffect(() => {
     if (isOpen) {
@@ -29,7 +30,7 @@ export function SignaturePad({ isOpen, onClose, onSave, title }: SignaturePadPro
           canvas.height = 150; // fixed height
           const ctx = canvas.getContext('2d');
           if (ctx) {
-            ctx.strokeStyle = '#2563eb'; // Elegant blue ink
+            ctx.strokeStyle = penColor; // Elegant blue ink
             ctx.lineWidth = 2.5;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
@@ -39,6 +40,16 @@ export function SignaturePad({ isOpen, onClose, onSave, title }: SignaturePadPro
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.strokeStyle = penColor;
+      }
+    }
+  }, [penColor]);
 
   if (!isOpen) return null;
 
@@ -52,7 +63,7 @@ export function SignaturePad({ isOpen, onClose, onSave, title }: SignaturePadPro
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     // Set drawing settings for premium look
-    ctx.strokeStyle = '#0f3299'; // High def signature blue ink
+    ctx.strokeStyle = penColor; // Use selected pen color
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     
@@ -94,7 +105,7 @@ export function SignaturePad({ isOpen, onClose, onSave, title }: SignaturePadPro
       // Little ink dot
       ctx.beginPath();
       ctx.arc(w / 2 + 100, h / 2 + 12, 1.6, 0, Math.PI * 2);
-      ctx.fillStyle = '#0f3299';
+      ctx.fillStyle = penColor;
       ctx.fill();
     } else if (presetIndex === 2) {
       // Draw Paraphe 3D
@@ -252,6 +263,45 @@ export function SignaturePad({ isOpen, onClose, onSave, title }: SignaturePadPro
                 <span className="text-sm text-slate-400 font-medium">Dessiner ici</span>
               </div>
             )}
+          </div>
+
+          {/* CHOIX DE LA COULEUR DE L'ENCRE */}
+          <div className="mb-4">
+            <span className="text-xs font-semibold text-slate-700 block mb-1.5 text-left">
+              Couleur de l'encre :
+            </span>
+            <div className="flex items-center gap-3">
+              {[
+                { name: 'Bleu standard', value: '#2563eb', bg: 'bg-[#2563eb]' },
+                { name: 'Bleu marine', value: '#1e3a8a', bg: 'bg-[#1e3a8a]' },
+                { name: 'Noir', value: '#18181b', bg: 'bg-[#18181b]' },
+                { name: 'Rouge', value: '#dc2626', bg: 'bg-[#dc2626]' },
+                { name: 'Vert', value: '#059669', bg: 'bg-[#059669]' },
+              ].map((color) => (
+                <button
+                  key={color.value}
+                  type="button"
+                  onClick={() => setPenColor(color.value)}
+                  className={`w-7 h-7 rounded-full ${color.bg} border-2 transition-all duration-200 cursor-pointer flex items-center justify-center relative ${
+                    penColor === color.value 
+                      ? 'border-amber-500 scale-110 shadow-sm' 
+                      : 'border-slate-200 hover:scale-105'
+                  }`}
+                  title={color.name}
+                >
+                  {penColor === color.value && (
+                    <span className="absolute inset-0 m-auto w-1.5 h-1.5 rounded-full bg-white"></span>
+                  )}
+                </button>
+              ))}
+              <span className="text-[10px] text-slate-400 font-medium italic select-none">
+                {penColor === '#2563eb' && "Bleu standard"}
+                {penColor === '#1e3a8a' && "Bleu marine"}
+                {penColor === '#18181b' && "Noir classique"}
+                {penColor === '#dc2626' && "Rouge légal"}
+                {penColor === '#059669' && "Vert émeraude"}
+              </span>
+            </div>
           </div>
 
           {/* PRESSET MASSIVE COMPLEX SIGNATURES SECURED */}
